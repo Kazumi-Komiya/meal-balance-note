@@ -1,0 +1,16 @@
+{
+  "name": "食事バランスノート",
+  "short_name": "食事バランス",
+  "start_url": "./meal-balance-helper.html",
+  "display": "standalone",
+  "background_color": "#f7faf8",
+  "theme_color": "#2d7a56",
+  "icons": [
+    {
+      "src": "./meal-balance-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

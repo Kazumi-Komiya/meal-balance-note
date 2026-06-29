@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2d7a56">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="食事バランス">
+  <link rel="manifest" href="meal-balance-helper.webmanifest">
+  <link rel="icon" href="meal-balance-icon.svg" type="image/svg+xml">
+  <title>食事バランスノート</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2321;
+      --muted: #63706b;
+      --line: #dce4df;
+      --paper: #f7faf8;
+      --panel: #ffffff;
+      --leaf: #2d7a56;
+      --leaf-soft: #e7f4ed;
+      --tomato: #c84d3d;
+      --amber: #b7791f;
+      --blue: #2f6f9f;
+      --shadow: 0 18px 45px rgba(31, 45, 38, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+      font-weight: 760;
+    }
+
+    .date-pill {
+      min-width: 132px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .layout > *,
+    .result-grid > * {
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 18px 0;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .subsection-title {
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 760;
+      margin-bottom: 10px;
+    }
+
+    .health-fields {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbf9;
+      padding: 12px;
+    }
+
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--leaf);
+      box-shadow: 0 0 0 3px rgba(45, 122, 86, 0.13);
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .photo-box {
+      display: grid;
+      gap: 10px;
+    }
+
+    .photo-input {
+      min-height: 48px;
+      padding: 11px;
+    }
+
+    .photo-preview {
+      display: none;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #eef4f0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 16px;
+      cursor: pointer;
+      font-weight: 740;
+    }
+
+    .button.primary {
+      flex: 1;
+      background: var(--leaf);
+      color: white;
+    }
+
+    .button.secondary {
+      background: #eef3f0;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      min-height: 96px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      display: grid;
+      align-content: space-between;
+      gap: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .metric strong {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+      gap: 18px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      background: #f8fbf9;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 76px;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .status.low {
+      background: #fff3d8;
+      color: #7a4a00;
+    }
+
+    .status.ok {
+      background: var(--leaf-soft);
+      color: #1d6544;
+    }
+
+    .status.high {
+      background: #ffe6e2;
+      color: #9c2f22;
+    }
+
+    .suggestions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .suggestion {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 13px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .suggestion-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .suggestion strong {
+      font-size: 15px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: var(--leaf-soft);
+      color: #1d6544;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .foods {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .parsed {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .parsed-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .parsed-item small {
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .save-status {
+      margin-top: 8px;
+      color: var(--leaf);
+      font-size: 12px;
+      min-height: 18px;
+    }
+
+    .empty {
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      border: 1px dashed #c9d6cf;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .layout,
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        padding: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .date-pill {
+        width: 100%;
+      }
+
+      .field-grid,
+      .summary-grid,
+      .health-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <h1>食事バランスノート</h1>
+      <div class="date-pill" id="todayLabel"></div>
+    </div>
+
+    <div class="layout">
+      <section class="panel" aria-labelledby="profileTitle">
+        <div class="panel-header">
+          <h2 class="panel-title" id="profileTitle">今日の入力</h2>
+        </div>
+        <div class="panel-body">
+          <form id="mealForm">
+            <div class="field-grid">
+              <label>
+                年齢
+                <input id="age" type="number" min="1" max="120" value="35" required>
+              </label>
+              <label>
+                性別
+                <select id="sex" required>
+                  <option value="female">女性</option>
+                  <option value="male">男性</option>
+                </select>
+              </label>
+              <label>
+                身長 cm
+                <input id="height" type="number" min="80" max="230" value="160" required>
+              </label>
+              <label>
+                体重 kg
+                <input id="weight" type="number" min="20" max="250" value="55" required>
+              </label>
+              <label class="full">
+                活動量
+                <select id="activity">
+                  <option value="1.35">低め</option>
+                  <option value="1.55" selected>ふつう</option>
+                  <option value="1.75">高め</option>
+                </select>
+              </label>
+              <div class="full health-fields">
+                <div class="subsection-title">Healthの数値入力</div>
+                <div class="health-grid">
+                  <label>
+                    歩数
+                    <input id="steps" type="number" min="0" max="100000" placeholder="例: 8000">
+                  </label>
+                  <label>
+                    アクティブエネルギー kcal
+                    <input id="activeEnergy" type="number" min="0" max="5000" placeholder="例: 350">
+                  </label>
+                  <label>
+                    運動時間 分
+                    <input id="exerciseMinutes" type="number" min="0" max="1440" placeholder="例: 30">
+                  </label>
+                </div>
+              </div>
+              <label class="full photo-box">
+                食事写真
+                <input class="photo-input" id="photo" type="file" accept="image/*">
+                <img class="photo-preview" id="photoPreview" alt="食事写真のプレビュー">
+              </label>
+              <label class="full">
+                食材メモ
+                <textarea id="foodText" required>白ごはん 150g、焼き鮭 1切れ、味噌汁 1杯、ほうれん草のおひたし 1皿</textarea>
+              </label>
+            </div>
+            <div class="actions">
+              <button class="button primary" type="submit">計算する</button>
+              <button class="button secondary" type="button" id="sampleButton">例を入れる</button>
+            </div>
+          </form>
+          <p class="note">写真はこの画面内の確認用です。栄養量は日常管理の目安で、診断や治療の代わりではありません。</p>
+          <div class="save-status" id="saveStatus" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="resultTitle">
+        <div class="panel-header">
+          <h2 class="panel-title" id="resultTitle">今日の記録と明日の提案</h2>
+        </div>
+        <div class="panel-body">
+          <div id="results" class="empty">入力後に、今日の摂取量と明日足したい栄養を表示します。</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const foods = [
+      { keys: ["白ごはん", "ごはん", "米飯", "精白米"], name: "白ごはん", unit: "g", defaultAmount: 150, kcal: 156, protein: 2.5, fat: 0.3, carbs: 37.1, fiber: 1.5, salt: 0, calcium: 3, iron: 0.1, vitaminC: 0, vitaminD: 0 },
+      { keys: ["玄米"], name: "玄米ごはん", unit: "g", defaultAmount: 150, kcal: 152, protein: 2.8, fat: 1.0, carbs: 35.6, fiber: 1.4, salt: 0, calcium: 7, iron: 0.6, vitaminC: 0, vitaminD: 0 },
+      { keys: ["クロワッサン"], name: "クロワッサン", unit: "piece", gramsPerUnit: 45, defaultAmount: 1, kcal: 448, protein: 7.9, fat: 26.8, carbs: 43.9, fiber: 1.8, salt: 1.0, calcium: 24, iron: 0.7, vitaminC: 0, vitaminD: 0 },
+      { keys: ["食パン", "トースト"], name: "食パン", unit: "slice", gramsPerUnit: 60, defaultAmount: 1, kcal: 248, protein: 8.9, fat: 4.1, carbs: 46.4, fiber: 4.2, salt: 1.2, calcium: 29, iron: 0.6, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ロールパン"], name: "ロールパン", unit: "piece", gramsPerUnit: 35, defaultAmount: 1, kcal: 309, protein: 10.1, fat: 9.0, carbs: 48.6, fiber: 2.0, salt: 1.2, calcium: 40, iron: 0.8, vitaminC: 0, vitaminD: 0 },
+      { keys: ["焼き鮭", "鮭", "サケ", "しゃけ"], name: "焼き鮭", unit: "piece", gramsPerUnit: 80, defaultAmount: 1, kcal: 178, protein: 25.2, fat: 8.2, carbs: 0.1, fiber: 0, salt: 1.4, calcium: 15, iron: 0.5, vitaminC: 1, vitaminD: 32 },
+      { keys: ["味噌汁", "みそ汁"], name: "味噌汁", unit: "bowl", gramsPerUnit: 180, defaultAmount: 1, kcal: 35, protein: 2.1, fat: 1.0, carbs: 4.3, fiber: 0.8, salt: 0.9, calcium: 32, iron: 0.5, vitaminC: 1, vitaminD: 0 },
+      { keys: ["ほうれん草", "おひたし"], name: "ほうれん草のおひたし", unit: "dish", gramsPerUnit: 70, defaultAmount: 1, kcal: 23, protein: 2.6, fat: 0.4, carbs: 3.1, fiber: 2.8, salt: 0.4, calcium: 49, iron: 1.4, vitaminC: 25, vitaminD: 0 },
+      { keys: ["納豆"], name: "納豆", unit: "pack", gramsPerUnit: 45, defaultAmount: 1, kcal: 190, protein: 16.5, fat: 10.0, carbs: 12.1, fiber: 6.7, salt: 0.0, calcium: 90, iron: 3.3, vitaminC: 0, vitaminD: 0 },
+      { keys: ["豆腐", "冷奴", "冷や奴"], name: "豆腐", unit: "g", defaultAmount: 150, kcal: 73, protein: 7.0, fat: 4.9, carbs: 1.5, fiber: 0.3, salt: 0, calcium: 93, iron: 1.5, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ブロッコリー"], name: "ブロッコリー", unit: "g", defaultAmount: 80, kcal: 30, protein: 3.9, fat: 0.4, carbs: 5.2, fiber: 4.4, salt: 0, calcium: 50, iron: 1.3, vitaminC: 55, vitaminD: 0 },
+      { keys: ["キウイ", "キウイフルーツ"], name: "キウイ", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 51, protein: 1.0, fat: 0.2, carbs: 13.4, fiber: 2.6, salt: 0, calcium: 26, iron: 0.3, vitaminC: 71, vitaminD: 0 },
+      { keys: ["ヨーグルト"], name: "ヨーグルト", unit: "g", defaultAmount: 100, kcal: 56, protein: 3.6, fat: 3.0, carbs: 4.9, fiber: 0, salt: 0.1, calcium: 120, iron: 0, vitaminC: 1, vitaminD: 0 },
+      { keys: ["卵", "たまご", "ゆで卵", "目玉焼き"], name: "卵", unit: "piece", gramsPerUnit: 55, defaultAmount: 1, kcal: 142, protein: 12.2, fat: 10.2, carbs: 0.4, fiber: 0, salt: 0.4, calcium: 46, iron: 1.5, vitaminC: 0, vitaminD: 3.8 },
+      { keys: ["鶏むね", "鶏胸", "サラダチキン"], name: "鶏むね肉", unit: "g", defaultAmount: 100, kcal: 113, protein: 24.4, fat: 1.9, carbs: 0, fiber: 0, salt: 0.1, calcium: 4, iron: 0.3, vitaminC: 1, vitaminD: 0.1 },
+      { keys: ["バナナ"], name: "バナナ", unit: "piece", gramsPerUnit: 100, defaultAmount: 1, kcal: 93, protein: 1.1, fat: 0.2, carbs: 22.5, fiber: 1.1, salt: 0, calcium: 6, iron: 0.3, vitaminC: 16, vitaminD: 0 },
+      { keys: ["牛乳"], name: "牛乳", unit: "ml", defaultAmount: 200, kcal: 61, protein: 3.3, fat: 3.8, carbs: 4.8, fiber: 0, salt: 0.1, calcium: 110, iron: 0, vitaminC: 1, vitaminD: 0.3 },
+      { keys: ["アーモンド"], name: "アーモンド", unit: "g", defaultAmount: 20, kcal: 609, protein: 19.6, fat: 51.8, carbs: 20.9, fiber: 10.1, salt: 0, calcium: 260, iron: 3.6, vitaminC: 0, vitaminD: 0 },
+      { keys: ["豚肉", "豚しゃぶ"], name: "豚肉", unit: "g", defaultAmount: 100, kcal: 248, protein: 19.3, fat: 19.2, carbs: 0.2, fiber: 0, salt: 0.1, calcium: 4, iron: 0.6, vitaminC: 1, vitaminD: 0.4 },
+      { keys: ["豚ロース", "豚の生姜焼き", "生姜焼き"], name: "豚ロース", unit: "g", defaultAmount: 100, kcal: 263, protein: 19.3, fat: 19.2, carbs: 0.2, fiber: 0, salt: 0.1, calcium: 4, iron: 0.6, vitaminC: 1, vitaminD: 0.4 },
+      { keys: ["あさり"], name: "あさり", unit: "g", defaultAmount: 80, kcal: 27, protein: 6.0, fat: 0.3, carbs: 0.4, fiber: 0, salt: 2.2, calcium: 66, iron: 3.8, vitaminC: 1, vitaminD: 0 },
+      { keys: ["小松菜"], name: "小松菜", unit: "g", defaultAmount: 80, kcal: 13, protein: 1.5, fat: 0.2, carbs: 2.4, fiber: 1.9, salt: 0, calcium: 170, iron: 2.8, vitaminC: 39, vitaminD: 0 },
+      { keys: ["パッションフルーツ"], name: "パッションフルーツ", unit: "piece", gramsPerUnit: 50, defaultAmount: 1, kcal: 64, protein: 0.8, fat: 0.4, carbs: 16.2, fiber: 10.4, salt: 0, calcium: 4, iron: 0.6, vitaminC: 16, vitaminD: 0 },
+      { keys: ["オーツミルクラテ", "オーツラテ"], name: "オーツミルクラテ", unit: "cup", gramsPerUnit: 250, defaultAmount: 1, kcal: 45, protein: 1.0, fat: 1.5, carbs: 7.0, fiber: 0.8, salt: 0.1, calcium: 80, iron: 0.2, vitaminC: 0, vitaminD: 0 },
+      { keys: ["レタス"], name: "レタス", unit: "leaf", gramsPerUnit: 10, defaultAmount: 3, kcal: 12, protein: 0.6, fat: 0.1, carbs: 2.8, fiber: 1.1, salt: 0, calcium: 19, iron: 0.3, vitaminC: 5, vitaminD: 0 },
+      { keys: ["ミニトマト", "プチトマト"], name: "ミニトマト", unit: "piece", gramsPerUnit: 15, defaultAmount: 4, kcal: 30, protein: 1.1, fat: 0.1, carbs: 7.2, fiber: 1.4, salt: 0, calcium: 12, iron: 0.4, vitaminC: 32, vitaminD: 0 },
+      { keys: ["アスパラガス", "アスパラ"], name: "アスパラガス", unit: "piece", gramsPerUnit: 20, defaultAmount: 2, kcal: 21, protein: 2.6, fat: 0.2, carbs: 3.9, fiber: 1.8, salt: 0, calcium: 19, iron: 0.7, vitaminC: 15, vitaminD: 0 },
+      { keys: ["シメジ", "しめじ", "エリンギ", "きのこ"], name: "きのこミックス", unit: "g", defaultAmount: 80, kcal: 22, protein: 2.7, fat: 0.4, carbs: 5.0, fiber: 3.4, salt: 0, calcium: 1, iron: 0.5, vitaminC: 0, vitaminD: 1.2 },
+      { keys: ["じゃがバター"], name: "じゃがバター", unit: "dish", gramsPerUnit: 150, defaultAmount: 1, kcal: 135, protein: 2.0, fat: 4.0, carbs: 25.0, fiber: 8.9, salt: 0.4, calcium: 4, iron: 0.4, vitaminC: 28, vitaminD: 0 },
+      { keys: ["パイナップルケーキ"], name: "パイナップルケーキ", unit: "piece", gramsPerUnit: 45, defaultAmount: 1, kcal: 390, protein: 4.0, fat: 16.0, carbs: 58.0, fiber: 1.0, salt: 0.3, calcium: 20, iron: 0.7, vitaminC: 1, vitaminD: 0 },
+      { keys: ["チーズ"], name: "チーズ", unit: "g", defaultAmount: 20, kcal: 313, protein: 22.7, fat: 26.0, carbs: 1.3, fiber: 0, salt: 2.8, calcium: 630, iron: 0.2, vitaminC: 0, vitaminD: 0.3 }
+    ];
+
+    const dishes = [
+      { keys: ["カレーライス", "カレー"], name: "カレーライス", serving: "1皿", kcal: 800, protein: 18, fat: 25, carbs: 120, fiber: 5, salt: 3.2, calcium: 65, iron: 2.3, vitaminC: 18, vitaminD: 0.2 },
+      { keys: ["ラーメン"], name: "ラーメン", serving: "1杯", kcal: 650, protein: 24, fat: 22, carbs: 82, fiber: 4, salt: 6.0, calcium: 80, iron: 2.0, vitaminC: 8, vitaminD: 0.5 },
+      { keys: ["うどん"], name: "うどん", serving: "1杯", kcal: 420, protein: 13, fat: 5, carbs: 78, fiber: 3, salt: 4.5, calcium: 45, iron: 1.1, vitaminC: 2, vitaminD: 0 },
+      { keys: ["そば"], name: "そば", serving: "1杯", kcal: 430, protein: 17, fat: 4, carbs: 78, fiber: 5, salt: 4.0, calcium: 40, iron: 2.0, vitaminC: 2, vitaminD: 0 },
+      { keys: ["親子丼"], name: "親子丼", serving: "1杯", kcal: 680, protein: 28, fat: 15, carbs: 102, fiber: 3, salt: 3.0, calcium: 75, iron: 2.1, vitaminC: 5, vitaminD: 2.0 },
+      { keys: ["牛丼"], name: "牛丼", serving: "1杯", kcal: 730, protein: 24, fat: 24, carbs: 100, fiber: 3, salt: 3.1, calcium: 35, iron: 2.2, vitaminC: 4, vitaminD: 0.1 },
+      { keys: ["チャーハン", "炒飯"], name: "チャーハン", serving: "1皿", kcal: 720, protein: 18, fat: 25, carbs: 100, fiber: 4, salt: 3.0, calcium: 55, iron: 1.8, vitaminC: 7, vitaminD: 1.0 },
+      { keys: ["パスタ", "スパゲッティ", "スパゲティ"], name: "パスタ", serving: "1皿", kcal: 650, protein: 20, fat: 18, carbs: 98, fiber: 5, salt: 2.8, calcium: 70, iron: 2.0, vitaminC: 12, vitaminD: 0.3 },
+      { keys: ["ハンバーグ"], name: "ハンバーグ", serving: "1人前", kcal: 480, protein: 26, fat: 30, carbs: 22, fiber: 2, salt: 2.5, calcium: 45, iron: 2.5, vitaminC: 6, vitaminD: 0.5 },
+      { keys: ["唐揚げ定食", "からあげ定食"], name: "唐揚げ定食", serving: "1食", kcal: 900, protein: 35, fat: 35, carbs: 105, fiber: 5, salt: 4.0, calcium: 75, iron: 2.0, vitaminC: 12, vitaminD: 0.3 },
+      { keys: ["サンドイッチ"], name: "サンドイッチ", serving: "1食", kcal: 420, protein: 16, fat: 18, carbs: 48, fiber: 3, salt: 2.0, calcium: 80, iron: 1.5, vitaminC: 12, vitaminD: 0.5 },
+      { keys: ["サラダ"], name: "サラダ", serving: "1皿", kcal: 120, protein: 5, fat: 7, carbs: 12, fiber: 4, salt: 0.8, calcium: 60, iron: 1.2, vitaminC: 35, vitaminD: 0 }
+    ];
+
+    const portionHints = [
+      { pattern: /少なめ|小さめ|軽め|半分/, label: "少なめ", multiplier: 0.8 },
+      { pattern: /大盛り|大盛|多め|大きめ/, label: "大盛り", multiplier: 1.35 },
+      { pattern: /特盛|かなり多め/, label: "特盛", multiplier: 1.6 }
+    ];
+
+    const nutrientLabels = {
+      kcal: "エネルギー",
+      protein: "たんぱく質",
+      fiber: "食物繊維",
+      salt: "食塩相当量",
+      calcium: "カルシウム",
+      iron: "鉄",
+      vitaminC: "ビタミンC",
+      vitaminD: "ビタミンD"
+    };
+
+    const units = {
+      kcal: "kcal",
+      protein: "g",
+      fiber: "g",
+      salt: "g",
+      calcium: "mg",
+      iron: "mg",
+      vitaminC: "mg",
+      vitaminD: "ug"
+    };
+
+    const suggestions = {
+      protein: ["納豆", "豆腐", "卵", "鶏むね肉", "ヨーグルト"],
+      fiber: ["ブロッコリー", "小松菜", "玄米ごはん", "納豆", "キウイ"],
+      calcium: ["牛乳", "ヨーグルト", "小松菜", "豆腐", "チーズ"],
+      iron: ["あさり", "小松菜", "納豆", "卵", "赤身肉"],
+      vitaminC: ["キウイ", "ブロッコリー", "小松菜", "じゃがいも", "いちご"],
+      vitaminD: ["焼き鮭", "卵", "きのこ類", "さば", "いわし"],
+      kcal: ["白ごはん", "食パン", "バナナ", "牛乳", "ヨーグルト"]
+    };
+
+    const form = document.querySelector("#mealForm");
+    const results = document.querySelector("#results");
+    const foodText = document.querySelector("#foodText");
+    const photo = document.querySelector("#photo");
+    const photoPreview = document.querySelector("#photoPreview");
+    const sampleButton = document.querySelector("#sampleButton");
+    const saveStatus = document.querySelector("#saveStatus");
+    const draftKey = "meal-balance-note-draft";
+    const draftFieldIds = ["age", "sex", "height", "weight", "activity", "steps", "activeEnergy", "exerciseMinutes", "foodText"];
+
+    document.querySelector("#todayLabel").textContent = new Intl.DateTimeFormat("ja-JP", {
+      month: "long",
+      day: "numeric",
+      weekday: "short"
+    }).format(new Date());
+
+    photo.addEventListener("change", () => {
+      const file = photo.files && photo.files[0];
+      if (!file) {
+        photoPreview.removeAttribute("src");
+        photoPreview.style.display = "none";
+        return;
+      }
+      photoPreview.src = URL.createObjectURL(file);
+      photoPreview.style.display = "block";
+    });
+
+    sampleButton.addEventListener("click", () => {
+      foodText.value = "カレーライス 少なめ、サラダ 1皿、ヨーグルト 100g";
+      saveDraft();
+      form.requestSubmit();
+    });
+
+    form.addEventListener("input", saveDraft);
+    form.addEventListener("change", saveDraft);
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      saveDraft();
+      const profile = getProfile();
+      const targets = getTargets(profile);
+      const parsed = parseFoods(foodText.value);
+      const totals = sumNutrition(parsed);
+      renderResults({ profile, targets, parsed, totals });
+    });
+
+    function getProfile() {
+      return {
+        age: Number(document.querySelector("#age").value),
+        sex: document.querySelector("#sex").value,
+        height: Number(document.querySelector("#height").value),
+        weight: Number(document.querySelector("#weight").value),
+        activity: Number(document.querySelector("#activity").value),
+        steps: Number(document.querySelector("#steps").value) || 0,
+        activeEnergy: Number(document.querySelector("#activeEnergy").value) || 0,
+        exerciseMinutes: Number(document.querySelector("#exerciseMinutes").value) || 0
+      };
+    }
+
+    function getTargets(profile) {
+      const base = 10 * profile.weight + 6.25 * profile.height - 5 * profile.age + (profile.sex === "male" ? 5 : -161);
+      const estimatedKcal = Math.round(base * profile.activity);
+      const healthAdjusted = profile.activeEnergy > 0;
+      const kcal = healthAdjusted ? Math.round(base * 1.2 + profile.activeEnergy) : estimatedKcal;
+      return {
+        kcal,
+        estimatedKcal,
+        baseKcal: Math.round(base),
+        healthAdjusted,
+        protein: Math.max(profile.sex === "male" ? 65 : 50, Math.round(profile.weight * 1.0)),
+        fiber: profile.sex === "male" ? 22 : 18,
+        salt: profile.sex === "male" ? 7.5 : 6.5,
+        calcium: profile.sex === "male" ? 750 : 650,
+        iron: profile.sex === "female" && profile.age < 50 ? 10.5 : 7.5,
+        vitaminC: 100,
+        vitaminD: 9
+      };
+    }
+
+    function parseFoods(text) {
+      return text
+        .split(/[、,\n]/)
+        .map(part => part.trim())
+        .filter(part => part && !isEmptyMealNote(part))
+        .map(part => parseFoodItem(part));
+    }
+
+    function isEmptyMealNote(text) {
+      return /^(朝|昼|夜|間食)?\s*[:：]?\s*(なし|無し|食べてない|抜き)$/i.test(text);
+    }
+
+    function parseFoodItem(text) {
+      const calorieOnly = parseCalorieItem(text);
+      if (calorieOnly) return calorieOnly;
+
+      const dish = parseDishItem(text);
+      if (dish) return dish;
+
+      const match = foods.find(food => food.keys.some(key => text.includes(key)));
+      if (!match) {
+        return { raw: text, name: text, matched: false, estimated: true, grams: 0, amountLabel: "未登録" };
+      }
+
+      const gramsMatch = text.match(/(\d+(?:\.\d+)?)\s*(g|グラム)/i);
+      const mlMatch = text.match(/(\d+(?:\.\d+)?)\s*(ml|ミリリットル)/i);
+      const countMatch = text.match(/(\d+(?:\.\d+)?)\s*(個|枚|切れ|杯|皿|本|パック)/);
+      let grams = 0;
+      let amountLabel = "";
+      let estimated = false;
+
+      if (gramsMatch) {
+        grams = Number(gramsMatch[1]);
+        amountLabel = `${grams}g`;
+      } else if (mlMatch) {
+        grams = Number(mlMatch[1]);
+        amountLabel = `${grams}ml`;
+      } else if (countMatch && match.gramsPerUnit) {
+        const count = Number(countMatch[1]);
+        grams = count * match.gramsPerUnit;
+        amountLabel = `${count}${countMatch[2]}（約${grams}g）`;
+        estimated = true;
+      } else if (match.unit === "g" || match.unit === "ml") {
+        grams = match.defaultAmount;
+        amountLabel = `約${grams}${match.unit}`;
+        estimated = true;
+      } else if (match.gramsPerUnit) {
+        grams = match.defaultAmount * match.gramsPerUnit;
+        amountLabel = `約${match.defaultAmount}食分（${grams}g）`;
+        estimated = true;
+      }
+
+      return {
+        raw: text,
+        name: match.name,
+        matched: true,
+        estimated,
+        grams,
+        amountLabel,
+        nutrition: scaleNutrition(match, grams)
+      };
+    }
+
+    function parseCalorieItem(text) {
+      const match = text.match(/(\d+(?:\.\d+)?)\s*(kcal|キロカロリー|カロリー)/i);
+      if (!match) return null;
+      const name = text
+        .replace(/^(朝|昼|夜|間食)\s*[:：]\s*/, "")
+        .replace(match[0], "")
+        .trim() || "カロリー入力";
+      return {
+        raw: text,
+        name,
+        matched: true,
+        estimated: false,
+        grams: 0,
+        amountLabel: "入力カロリー",
+        nutrition: {
+          kcal: Number(match[1]),
+          protein: 0,
+          fiber: 0,
+          salt: 0,
+          calcium: 0,
+          iron: 0,
+          vitaminC: 0,
+          vitaminD: 0
+        }
+      };
+    }
+
+    function parseDishItem(text) {
+      const match = dishes.find(dish => dish.keys.some(key => text.includes(key)));
+      if (!match) return null;
+
+      const portion = portionHints.find(hint => hint.pattern.test(text));
+      const multiplier = portion ? portion.multiplier : 1;
+      const portionLabel = portion ? portion.label : "一般的な量";
+      const servingCount = getServingCount(text);
+      const totalMultiplier = multiplier * servingCount;
+
+      return {
+        raw: text,
+        name: match.name,
+        matched: true,
+        estimated: true,
+        grams: 0,
+        amountLabel: `${servingCount === 1 ? match.serving : `${servingCount}${match.serving.replace(/^\d+/, "")}`}（${portionLabel}）`,
+        nutrition: scaleDishNutrition(match, totalMultiplier)
+      };
+    }
+
+    function getServingCount(text) {
+      const match = text.match(/(\d+(?:\.\d+)?)\s*(皿|杯|食|人前|個)/);
+      return match ? Number(match[1]) : 1;
+    }
+
+    function scaleDishNutrition(dish, multiplier) {
+      return Object.fromEntries(Object.keys(nutrientLabels).map(key => [key, (dish[key] || 0) * multiplier]));
+    }
+
+    function scaleNutrition(food, grams) {
+      const ratio = grams / 100;
+      return Object.fromEntries(Object.keys(nutrientLabels).map(key => [key, (food[key] || 0) * ratio]));
+    }
+
+    function sumNutrition(items) {
+      return items.reduce((total, item) => {
+        if (!item.nutrition) return total;
+        Object.keys(nutrientLabels).forEach(key => {
+          total[key] = (total[key] || 0) + item.nutrition[key];
+        });
+        return total;
+      }, {});
+    }
+
+    function renderResults(state) {
+      const { profile, targets, totals, parsed } = state;
+      const gaps = Object.keys(nutrientLabels).map(key => {
+        const value = totals[key] || 0;
+        const target = targets[key];
+        const percent = target ? value / target : 0;
+        return { key, value, target, percent };
+      });
+
+      const low = gaps
+        .filter(item => item.key !== "salt" && item.percent < 0.75)
+        .sort((a, b) => a.percent - b.percent)
+        .slice(0, 5);
+
+      results.className = "";
+      results.innerHTML = `
+        <div class="summary-grid">
+          ${summaryMetric("今日の摂取", Math.round(totals.kcal || 0), "kcal")}
+          ${summaryMetric(targets.healthAdjusted ? "今日の目標(活動反映)" : "今日の目標", targets.kcal, "kcal")}
+          ${summaryMetric("今日のたんぱく質", round(totals.protein || 0, 1), "g")}
+          ${summaryMetric("今日の食塩", round(totals.salt || 0, 1), "g")}
+        </div>
+        <div class="result-grid">
+          <div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>栄養</th>
+                    <th>今日の推定</th>
+                    <th>目安</th>
+                    <th>状態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${gaps.map(row => nutrientRow(row)).join("")}
+                </tbody>
+              </table>
+            </div>
+            <div class="parsed">
+              ${parsed.map(item => parsedItem(item)).join("")}
+            </div>
+          </div>
+          <div class="suggestions">
+            ${tomorrowLead(low, gaps)}
+            ${activityMessage(profile, targets)}
+            ${low.length ? low.map(item => suggestionItem(item)).join("") : balancedMessage()}
+            ${saltNotice(gaps.find(item => item.key === "salt"))}
+          </div>
+        </div>
+      `;
+    }
+
+    function tomorrowLead(low, gaps) {
+      const kcalGap = gaps.find(item => item.key === "kcal");
+      const priority = low.map(item => nutrientLabels[item.key]).slice(0, 3).join("、");
+      const energyText = kcalGap && kcalGap.percent < 0.75
+        ? "活動量や今日の摂取量を見ると、明日は主食も少し意識するとよさそうです。"
+        : "明日は不足しやすい栄養を足す方向で整えます。";
+
+      return `
+        <div class="suggestion">
+          <div class="suggestion-top">
+            <strong>明日の優先</strong>
+            <span class="tag">食材提案</span>
+          </div>
+          <div class="foods">${priority ? `${priority}を中心に補う提案です。` : "今日は大きな不足が少なめです。"} ${energyText}</div>
+        </div>
+      `;
+    }
+
+    function activityMessage(profile, targets) {
+      const hasHealthInput = profile.steps > 0 || profile.activeEnergy > 0 || profile.exerciseMinutes > 0;
+      if (!hasHealthInput) return "";
+
+      const level = getActivityLevel(profile);
+      const targetNote = targets.healthAdjusted
+        ? `アクティブエネルギー ${profile.activeEnergy} kcal を目標カロリーに反映しました。`
+        : "アクティブエネルギー未入力のため、目標カロリーは活動量設定のままです。";
+      const details = [
+        profile.steps > 0 ? `歩数 ${profile.steps.toLocaleString("ja-JP")}歩` : "",
+        profile.exerciseMinutes > 0 ? `運動 ${profile.exerciseMinutes}分` : "",
+        profile.activeEnergy > 0 ? `活動 ${profile.activeEnergy} kcal` : ""
+      ].filter(Boolean).join(" / ");
+
+      return `
+        <div class="suggestion">
+          <div class="suggestion-top">
+            <strong>明日の回復メモ</strong>
+            <span class="tag">${level.tag}</span>
+          </div>
+          <div class="foods">${details}<br>${targetNote} ${level.title}だったので、${level.message}</div>
+        </div>
+      `;
+    }
+
+    function getActivityLevel(profile) {
+      if (profile.activeEnergy >= 450 || profile.steps >= 9000 || profile.exerciseMinutes >= 45) {
+        return {
+          title: "よく動けた日",
+          tag: "活動多め",
+          message: "明日は主食とたんぱく質を少し足すと回復しやすいです。"
+        };
+      }
+      if (profile.activeEnergy >= 200 || profile.steps >= 5000 || profile.exerciseMinutes >= 20) {
+        return {
+          title: "ほどよく活動",
+          tag: "ふつう",
+          message: "明日は不足している栄養を優先して整えるくらいで大丈夫です。"
+        };
+      }
+      return {
+        title: "軽めの活動",
+        tag: "控えめ",
+        message: "明日は食物繊維やたんぱく質を中心に、軽く整える提案に寄せます。"
+      };
+    }
+
+    function summaryMetric(label, value, unit) {
+      return `<div class="metric"><span>${label}</span><strong>${value}</strong><span>${unit}</span></div>`;
+    }
+
+    function nutrientRow(row) {
+      const state = getStatus(row);
+      return `
+        <tr>
+          <td>${nutrientLabels[row.key]}</td>
+          <td>${formatValue(row.value, row.key)} ${units[row.key]}</td>
+          <td>${formatValue(row.target, row.key)} ${units[row.key]}</td>
+          <td><span class="status ${state.className}">${state.label}</span></td>
+        </tr>
+      `;
+    }
+
+    function parsedItem(item) {
+      const kcal = item.nutrition ? Math.round(item.nutrition.kcal) : "-";
+      const suffix = item.estimated ? "推定" : "入力";
+      const kcalLabel = item.estimated && kcal !== "-" ? `約${kcal}` : kcal;
+      return `
+        <div class="parsed-item">
+          <span>${item.name}</span>
+          <small>${item.amountLabel} / ${kcalLabel} kcal / ${suffix}</small>
+        </div>
+      `;
+    }
+
+    function suggestionItem(item) {
+      const missing = Math.max(item.target - item.value, 0);
+      return `
+        <div class="suggestion">
+          <div class="suggestion-top">
+            <strong>明日足したい: ${nutrientLabels[item.key]}</strong>
+            <span class="tag">目安 ${formatValue(missing, item.key)} ${units[item.key]}</span>
+          </div>
+          <div class="foods">${suggestions[item.key].join("、")} を候補にすると補いやすいです。</div>
+        </div>
+      `;
+    }
+
+    function balancedMessage() {
+      return `
+        <div class="suggestion">
+          <div class="suggestion-top">
+            <strong>明日は維持でOK</strong>
+            <span class="tag">良好</span>
+          </div>
+          <div class="foods">野菜、豆類、魚、乳製品を少しずつ入れると、明日も整えやすいです。</div>
+        </div>
+      `;
+    }
+
+    function saltNotice(row) {
+      if (!row || row.percent <= 1) return "";
+      return `
+        <div class="suggestion">
+          <div class="suggestion-top">
+            <strong>明日は塩分控えめ</strong>
+            <span class="tag" style="background:#ffe6e2;color:#9c2f22;">調整</span>
+          </div>
+          <div class="foods">今日の食塩が多めです。明日は汁物、漬物、加工食品を少し控え、果物や野菜を足すと調整しやすいです。</div>
+        </div>
+      `;
+    }
+
+    function getStatus(row) {
+      if (row.key === "salt") {
+        if (row.percent > 1) return { label: "多め", className: "high" };
+        return { label: "範囲内", className: "ok" };
+      }
+      if (row.percent < 0.75) return { label: "不足", className: "low" };
+      if (row.percent > 1.35 && row.key === "kcal") return { label: "多め", className: "high" };
+      return { label: "目安内", className: "ok" };
+    }
+
+    function formatValue(value, key) {
+      if (key === "kcal" || key === "calcium" || key === "vitaminC") return Math.round(value);
+      return round(value, 1);
+    }
+
+    function round(value, digits) {
+      const scale = 10 ** digits;
+      return Math.round(value * scale) / scale;
+    }
+
+    function saveDraft() {
+      const draft = {};
+      draftFieldIds.forEach(id => {
+        const field = document.querySelector(`#${id}`);
+        if (field) draft[id] = field.value;
+      });
+      localStorage.setItem(draftKey, JSON.stringify(draft));
+      saveStatus.textContent = "入力内容をこの端末に保存しました";
+    }
+
+    function loadDraft() {
+      const saved = localStorage.getItem(draftKey);
+      if (!saved) return;
+      try {
+        const draft = JSON.parse(saved);
+        draftFieldIds.forEach(id => {
+          const field = document.querySelector(`#${id}`);
+          if (field && draft[id] !== undefined) field.value = draft[id];
+        });
+        saveStatus.textContent = "前回の入力内容を読み込みました";
+      } catch {
+        localStorage.removeItem(draftKey);
+      }
+    }
+
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("meal-balance-sw.js").catch(() => {});
+    }
+
+    loadDraft();
+    form.requestSubmit();
+  </script>
+</body>
+</html>
