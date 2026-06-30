@@ -544,12 +544,29 @@
 
   <script>
     const foods = [
-      { keys: ["白ごはん", "ごはん", "米飯", "精白米"], name: "白ごはん", unit: "g", defaultAmount: 150, kcal: 156, protein: 2.5, fat: 0.3, carbs: 37.1, fiber: 1.5, salt: 0, calcium: 3, iron: 0.1, vitaminC: 0, vitaminD: 0 },
-      { keys: ["玄米"], name: "玄米ごはん", unit: "g", defaultAmount: 150, kcal: 152, protein: 2.8, fat: 1.0, carbs: 35.6, fiber: 1.4, salt: 0, calcium: 7, iron: 0.6, vitaminC: 0, vitaminD: 0 },
+      { keys: ["玄米ごはん", "玄米"], name: "玄米ごはん", unit: "g", defaultAmount: 150, kcal: 152, protein: 2.8, fat: 1.0, carbs: 35.6, fiber: 1.4, salt: 0, calcium: 7, iron: 0.6, vitaminC: 0, vitaminD: 0 },
+      { keys: ["雑穀ごはん", "雑穀米", "雑穀"], name: "雑穀米", unit: "g", defaultAmount: 150, kcal: 154, protein: 3.0, fat: 0.7, carbs: 35.8, fiber: 2.2, salt: 0, calcium: 9, iron: 0.5, vitaminC: 0, vitaminD: 0 },
+      { keys: ["白米", "白ごはん", "ごはん", "米飯", "精白米"], name: "白米", unit: "g", defaultAmount: 150, kcal: 156, protein: 2.5, fat: 0.3, carbs: 37.1, fiber: 1.5, salt: 0, calcium: 3, iron: 0.1, vitaminC: 0, vitaminD: 0 },
       { keys: ["クロワッサン"], name: "クロワッサン", unit: "piece", gramsPerUnit: 45, defaultAmount: 1, kcal: 448, protein: 7.9, fat: 26.8, carbs: 43.9, fiber: 1.8, salt: 1.0, calcium: 24, iron: 0.7, vitaminC: 0, vitaminD: 0 },
       { keys: ["パンオショコラ", "パン・オ・ショコラ", "チョコクロワッサン"], name: "パンオショコラ", unit: "piece", gramsPerUnit: 70, defaultAmount: 1, kcal: 420, protein: 7.0, fat: 23.0, carbs: 47.0, fiber: 2.5, salt: 0.8, calcium: 35, iron: 1.4, vitaminC: 0, vitaminD: 0 },
       { keys: ["食パン", "トースト"], name: "食パン", unit: "slice", gramsPerUnit: 60, defaultAmount: 1, kcal: 248, protein: 8.9, fat: 4.1, carbs: 46.4, fiber: 4.2, salt: 1.2, calcium: 29, iron: 0.6, vitaminC: 0, vitaminD: 0 },
       { keys: ["ロールパン"], name: "ロールパン", unit: "piece", gramsPerUnit: 35, defaultAmount: 1, kcal: 309, protein: 10.1, fat: 9.0, carbs: 48.6, fiber: 2.0, salt: 1.2, calcium: 40, iron: 0.8, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ベーグル"], name: "ベーグル", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 260, protein: 9.0, fat: 1.5, carbs: 52.0, fiber: 2.5, salt: 1.1, calcium: 25, iron: 1.2, vitaminC: 0, vitaminD: 0 },
+      { keys: ["メロンパン"], name: "メロンパン", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 390, protein: 8.0, fat: 11.0, carbs: 65.0, fiber: 2.0, salt: 0.8, calcium: 35, iron: 1.0, vitaminC: 0, vitaminD: 0 },
+      { keys: ["あんぱん", "アンパン"], name: "あんぱん", unit: "piece", gramsPerUnit: 85, defaultAmount: 1, kcal: 280, protein: 7.0, fat: 4.0, carbs: 55.0, fiber: 3.0, salt: 0.6, calcium: 30, iron: 1.4, vitaminC: 0, vitaminD: 0 },
+      { keys: ["クリームパン"], name: "クリームパン", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 300, protein: 7.0, fat: 10.0, carbs: 45.0, fiber: 1.2, salt: 0.6, calcium: 75, iron: 0.7, vitaminC: 0, vitaminD: 0.4 },
+      { keys: ["ジャムパン"], name: "ジャムパン", unit: "piece", gramsPerUnit: 80, defaultAmount: 1, kcal: 260, protein: 6.0, fat: 4.0, carbs: 50.0, fiber: 1.5, salt: 0.6, calcium: 25, iron: 0.7, vitaminC: 2, vitaminD: 0 },
+      { keys: ["塩パン"], name: "塩パン", unit: "piece", gramsPerUnit: 60, defaultAmount: 1, kcal: 260, protein: 6.0, fat: 14.0, carbs: 28.0, fiber: 1.2, salt: 1.0, calcium: 20, iron: 0.6, vitaminC: 0, vitaminD: 0 },
+      { keys: ["フランスパン", "バゲット", "バケット"], name: "フランスパン", unit: "piece", gramsPerUnit: 60, defaultAmount: 1, kcal: 280, protein: 9.0, fat: 1.3, carbs: 57.0, fiber: 2.7, salt: 1.6, calcium: 16, iron: 0.9, vitaminC: 0, vitaminD: 0 },
+      { keys: ["明太フランス"], name: "明太フランス", unit: "piece", gramsPerUnit: 85, defaultAmount: 1, kcal: 330, protein: 10.0, fat: 13.0, carbs: 43.0, fiber: 2.0, salt: 2.0, calcium: 25, iron: 1.0, vitaminC: 1, vitaminD: 0.2 },
+      { keys: ["ガーリックフランス"], name: "ガーリックフランス", unit: "piece", gramsPerUnit: 80, defaultAmount: 1, kcal: 360, protein: 8.0, fat: 18.0, carbs: 42.0, fiber: 2.0, salt: 1.5, calcium: 20, iron: 0.9, vitaminC: 1, vitaminD: 0 },
+      { keys: ["ウインナーパン", "ソーセージパン"], name: "ウインナーパン", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 340, protein: 11.0, fat: 18.0, carbs: 34.0, fiber: 1.5, salt: 1.8, calcium: 30, iron: 1.0, vitaminC: 2, vitaminD: 0.2 },
+      { keys: ["焼きそばパン", "やきそばパン"], name: "焼きそばパン", unit: "piece", gramsPerUnit: 130, defaultAmount: 1, kcal: 360, protein: 10.0, fat: 10.0, carbs: 58.0, fiber: 3.0, salt: 2.4, calcium: 35, iron: 1.2, vitaminC: 5, vitaminD: 0 },
+      { keys: ["たまごパン", "卵パン"], name: "たまごパン", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 320, protein: 10.0, fat: 15.0, carbs: 36.0, fiber: 1.5, salt: 1.2, calcium: 45, iron: 1.2, vitaminC: 0, vitaminD: 1.2 },
+      { keys: ["チーズパン"], name: "チーズパン", unit: "piece", gramsPerUnit: 85, defaultAmount: 1, kcal: 320, protein: 11.0, fat: 14.0, carbs: 36.0, fiber: 1.5, salt: 1.3, calcium: 150, iron: 0.8, vitaminC: 0, vitaminD: 0.2 },
+      { keys: ["フォカッチャ"], name: "フォカッチャ", unit: "piece", gramsPerUnit: 90, defaultAmount: 1, kcal: 280, protein: 7.0, fat: 8.0, carbs: 45.0, fiber: 2.0, salt: 1.2, calcium: 25, iron: 1.0, vitaminC: 0, vitaminD: 0 },
+      { keys: ["スコーン"], name: "スコーン", unit: "piece", gramsPerUnit: 70, defaultAmount: 1, kcal: 320, protein: 6.0, fat: 15.0, carbs: 40.0, fiber: 1.5, salt: 0.8, calcium: 45, iron: 0.8, vitaminC: 0, vitaminD: 0.2 },
+      { keys: ["マフィン"], name: "マフィン", unit: "piece", gramsPerUnit: 80, defaultAmount: 1, kcal: 340, protein: 6.0, fat: 16.0, carbs: 44.0, fiber: 1.5, salt: 0.8, calcium: 50, iron: 0.9, vitaminC: 0, vitaminD: 0.2 },
       { keys: ["焼き鮭", "鮭", "サケ", "しゃけ"], name: "焼き鮭", unit: "piece", gramsPerUnit: 80, defaultAmount: 1, kcal: 178, protein: 25.2, fat: 8.2, carbs: 0.1, fiber: 0, salt: 1.4, calcium: 15, iron: 0.5, vitaminC: 1, vitaminD: 32 },
       { keys: ["味噌汁", "みそ汁"], name: "味噌汁", unit: "bowl", gramsPerUnit: 180, defaultAmount: 1, kcal: 35, protein: 2.1, fat: 1.0, carbs: 4.3, fiber: 0.8, salt: 0.9, calcium: 32, iron: 0.5, vitaminC: 1, vitaminD: 0 },
       { keys: ["ほうれん草", "おひたし"], name: "ほうれん草のおひたし", unit: "dish", gramsPerUnit: 70, defaultAmount: 1, kcal: 23, protein: 2.6, fat: 0.4, carbs: 3.1, fiber: 2.8, salt: 0.4, calcium: 49, iron: 1.4, vitaminC: 25, vitaminD: 0 },
@@ -607,6 +624,35 @@
     const dishes = [
       { keys: ["カレーパン"], name: "カレーパン", serving: "1個", kcal: 290, protein: 7, fat: 15, carbs: 33, fiber: 2, salt: 1.1, calcium: 25, iron: 1.0, vitaminC: 2, vitaminD: 0 },
       { keys: ["おにぎり", "おむすび"], name: "おにぎり", serving: "1個", kcal: 180, protein: 4, fat: 1, carbs: 39, fiber: 1, salt: 1.0, calcium: 8, iron: 0.4, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ハンバーガー"], name: "ハンバーガー", serving: "1個", kcal: 520, protein: 25, fat: 25, carbs: 48, fiber: 3, salt: 2.4, calcium: 120, iron: 3.0, vitaminC: 6, vitaminD: 0.4 },
+      { keys: ["チーズバーガー"], name: "チーズバーガー", serving: "1個", kcal: 580, protein: 28, fat: 31, carbs: 48, fiber: 3, salt: 2.8, calcium: 220, iron: 3.0, vitaminC: 6, vitaminD: 0.5 },
+      { keys: ["フライドポテト", "ポテトフライ"], name: "フライドポテト", serving: "1個", kcal: 360, protein: 5, fat: 18, carbs: 46, fiber: 4, salt: 1.4, calcium: 15, iron: 0.8, vitaminC: 18, vitaminD: 0 },
+      { keys: ["ピザ"], name: "ピザ", serving: "1人前", kcal: 700, protein: 28, fat: 32, carbs: 75, fiber: 4, salt: 3.5, calcium: 260, iron: 2.0, vitaminC: 10, vitaminD: 0.3 },
+      { keys: ["タコス"], name: "タコス", serving: "2個", kcal: 520, protein: 24, fat: 24, carbs: 50, fiber: 7, salt: 2.6, calcium: 160, iron: 2.8, vitaminC: 18, vitaminD: 0.2 },
+      { keys: ["ブリトー"], name: "ブリトー", serving: "1本", kcal: 650, protein: 28, fat: 24, carbs: 78, fiber: 8, salt: 3.2, calcium: 180, iron: 3.2, vitaminC: 14, vitaminD: 0.2 },
+      { keys: ["ケバブ"], name: "ケバブ", serving: "1個", kcal: 620, protein: 30, fat: 28, carbs: 60, fiber: 5, salt: 3.0, calcium: 100, iron: 2.5, vitaminC: 20, vitaminD: 0.2 },
+      { keys: ["ナン"], name: "ナン", serving: "1枚", kcal: 330, protein: 9, fat: 7, carbs: 58, fiber: 2, salt: 1.2, calcium: 35, iron: 1.5, vitaminC: 0, vitaminD: 0 },
+      { keys: ["インドカレー", "バターチキンカレー"], name: "インドカレー", serving: "1皿", kcal: 520, protein: 22, fat: 30, carbs: 38, fiber: 5, salt: 3.0, calcium: 90, iron: 2.5, vitaminC: 14, vitaminD: 0.3 },
+      { keys: ["グリーンカレー", "タイカレー"], name: "グリーンカレー", serving: "1皿", kcal: 650, protein: 25, fat: 32, carbs: 70, fiber: 5, salt: 3.5, calcium: 80, iron: 2.2, vitaminC: 24, vitaminD: 0.2 },
+      { keys: ["ガパオライス", "ガパオ"], name: "ガパオライス", serving: "1皿", kcal: 720, protein: 32, fat: 28, carbs: 85, fiber: 4, salt: 3.2, calcium: 70, iron: 2.8, vitaminC: 18, vitaminD: 1.2 },
+      { keys: ["パッタイ"], name: "パッタイ", serving: "1皿", kcal: 700, protein: 24, fat: 24, carbs: 95, fiber: 4, salt: 3.8, calcium: 90, iron: 2.2, vitaminC: 12, vitaminD: 0.2 },
+      { keys: ["フォー"], name: "フォー", serving: "1杯", kcal: 480, protein: 24, fat: 8, carbs: 78, fiber: 3, salt: 4.0, calcium: 55, iron: 1.8, vitaminC: 12, vitaminD: 0.2 },
+      { keys: ["バインミー"], name: "バインミー", serving: "1個", kcal: 520, protein: 22, fat: 18, carbs: 68, fiber: 4, salt: 3.0, calcium: 70, iron: 2.0, vitaminC: 18, vitaminD: 0.2 },
+      { keys: ["ナシゴレン"], name: "ナシゴレン", serving: "1皿", kcal: 760, protein: 25, fat: 28, carbs: 100, fiber: 4, salt: 3.6, calcium: 70, iron: 2.3, vitaminC: 14, vitaminD: 1.0 },
+      { keys: ["ビビンバ", "ビビンパ"], name: "ビビンバ", serving: "1杯", kcal: 650, protein: 24, fat: 18, carbs: 95, fiber: 6, salt: 3.4, calcium: 110, iron: 3.5, vitaminC: 24, vitaminD: 0.4 },
+      { keys: ["冷麺"], name: "冷麺", serving: "1杯", kcal: 520, protein: 18, fat: 8, carbs: 92, fiber: 4, salt: 4.2, calcium: 60, iron: 2.0, vitaminC: 16, vitaminD: 0.2 },
+      { keys: ["チヂミ"], name: "チヂミ", serving: "1枚", kcal: 450, protein: 14, fat: 20, carbs: 52, fiber: 3, salt: 2.5, calcium: 70, iron: 1.8, vitaminC: 10, vitaminD: 0.2 },
+      { keys: ["サムギョプサル"], name: "サムギョプサル", serving: "1人前", kcal: 780, protein: 32, fat: 60, carbs: 18, fiber: 4, salt: 2.5, calcium: 80, iron: 2.0, vitaminC: 20, vitaminD: 0.5 },
+      { keys: ["小籠包"], name: "小籠包", serving: "6個", kcal: 360, protein: 16, fat: 18, carbs: 34, fiber: 2, salt: 2.0, calcium: 35, iron: 1.5, vitaminC: 2, vitaminD: 0.2 },
+      { keys: ["春巻き", "春巻"], name: "春巻き", serving: "2本", kcal: 320, protein: 9, fat: 18, carbs: 30, fiber: 3, salt: 1.6, calcium: 35, iron: 1.0, vitaminC: 8, vitaminD: 0.1 },
+      { keys: ["青椒肉絲", "チンジャオロース"], name: "青椒肉絲", serving: "1皿", kcal: 380, protein: 22, fat: 24, carbs: 18, fiber: 4, salt: 2.8, calcium: 40, iron: 2.0, vitaminC: 35, vitaminD: 0.2 },
+      { keys: ["回鍋肉", "ホイコーロー"], name: "回鍋肉", serving: "1皿", kcal: 480, protein: 22, fat: 32, carbs: 24, fiber: 5, salt: 3.0, calcium: 60, iron: 1.8, vitaminC: 32, vitaminD: 0.2 },
+      { keys: ["エビチリ"], name: "エビチリ", serving: "1皿", kcal: 360, protein: 24, fat: 16, carbs: 28, fiber: 2, salt: 2.8, calcium: 70, iron: 1.0, vitaminC: 8, vitaminD: 0.2 },
+      { keys: ["パエリア"], name: "パエリア", serving: "1皿", kcal: 650, protein: 28, fat: 18, carbs: 95, fiber: 4, salt: 3.2, calcium: 80, iron: 2.5, vitaminC: 18, vitaminD: 1.0 },
+      { keys: ["リゾット"], name: "リゾット", serving: "1皿", kcal: 560, protein: 18, fat: 20, carbs: 75, fiber: 3, salt: 2.8, calcium: 160, iron: 1.5, vitaminC: 8, vitaminD: 0.3 },
+      { keys: ["ラザニア"], name: "ラザニア", serving: "1皿", kcal: 720, protein: 32, fat: 34, carbs: 70, fiber: 4, salt: 3.4, calcium: 260, iron: 2.5, vitaminC: 12, vitaminD: 0.5 },
+      { keys: ["キッシュ"], name: "キッシュ", serving: "1切れ", kcal: 360, protein: 12, fat: 24, carbs: 24, fiber: 2, salt: 1.4, calcium: 160, iron: 1.0, vitaminC: 4, vitaminD: 1.5 },
+      { keys: ["クラムチャウダー"], name: "クラムチャウダー", serving: "1杯", kcal: 260, protein: 10, fat: 14, carbs: 24, fiber: 2, salt: 2.0, calcium: 140, iron: 2.0, vitaminC: 8, vitaminD: 0.3 },
       { keys: ["焼きそば", "やきそば"], name: "焼きそば", serving: "1皿", kcal: 560, protein: 18, fat: 20, carbs: 75, fiber: 5, salt: 4.2, calcium: 60, iron: 1.8, vitaminC: 18, vitaminD: 0.2 },
       { keys: ["焼きうどん", "焼うどん"], name: "焼きうどん", serving: "1皿", kcal: 520, protein: 17, fat: 17, carbs: 76, fiber: 4, salt: 3.8, calcium: 55, iron: 1.5, vitaminC: 14, vitaminD: 0.2 },
       { keys: ["オムライス"], name: "オムライス", serving: "1皿", kcal: 760, protein: 25, fat: 25, carbs: 105, fiber: 4, salt: 3.2, calcium: 85, iron: 2.6, vitaminC: 12, vitaminD: 2.4 },
@@ -883,7 +929,7 @@
       const looksLikeBread = /パン|明太フランス|ガーリックフランス|チーズフランス|フランスパン|ベーグル|フォカッチャ|バゲット|バケット|ホットドッグ|ピザトースト|惣菜パン|調理パン/.test(cleaned);
       if (!looksLikeBread) return null;
 
-      const knownBread = /クロワッサン|パンオショコラ|パン・オ・ショコラ|チョコクロワッサン|ロールパン/.test(cleaned) || /^(食パン|トースト)(\s|$|[0-9０-９])/.test(cleaned);
+      const knownBread = /クロワッサン|パンオショコラ|パン・オ・ショコラ|チョコクロワッサン|ロールパン|ベーグル|メロンパン|あんぱん|アンパン|クリームパン|ジャムパン|塩パン|フランスパン|バゲット|バケット|明太フランス|ガーリックフランス|ウインナーパン|ソーセージパン|焼きそばパン|やきそばパン|たまごパン|卵パン|チーズパン|フォカッチャ|スコーン|マフィン/.test(cleaned) || /^(食パン|トースト)(\s|$|[0-9０-９])/.test(cleaned);
       if (knownBread) return null;
 
       const countMatch = cleaned.match(/(\d+(?:\.\d+)?)\s*(個|本|枚|切れ)/);
