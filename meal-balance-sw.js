@@ -1,4 +1,4 @@
-const CACHE_NAME = "meal-balance-note-v7";
+const CACHE_NAME = "meal-balance-note-v8";
 const ASSETS = [
   "./meal-balance-helper.html",
   "./meal-balance-helper.webmanifest",
