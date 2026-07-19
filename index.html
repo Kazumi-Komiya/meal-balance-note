@@ -162,6 +162,68 @@
       margin-top: 12px;
     }
 
+    .myfood-save {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      line-height: 1.5;
+    }
+
+    .myfood-save input {
+      width: 18px;
+      min-height: 18px;
+      margin: 1px 0 0;
+      flex: none;
+    }
+
+    .myfood-list {
+      margin-top: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .myfood-empty {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .myfood-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .myfood-item:last-child {
+      border-bottom: 0;
+    }
+
+    .myfood-item small {
+      color: var(--muted);
+      display: block;
+      font-weight: 600;
+    }
+
+    .myfood-delete {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      flex: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 11px;
+    }
+
     label {
       display: grid;
       gap: 7px;
@@ -602,10 +664,18 @@
                     <input id="packageVitaminD" type="number" min="0" max="500" step="0.1" placeholder="例: 1.5">
                   </label>
                 </div>
+                <label class="myfood-save">
+                  <input id="packageSaveMyFood" type="checkbox">
+                  <span>マイ食材として保存して次回から使う（商品名の入力が必要です。この端末内にのみ保存されます）</span>
+                </label>
                 <div class="package-actions">
                   <button class="button secondary" type="button" id="packageAddButton">食材メモに追加</button>
                 </div>
                 <div class="save-status" id="packageStatus" aria-live="polite"></div>
+                <div class="myfood-list">
+                  <div class="subsection-title package-group-title">登録済みのマイ食材</div>
+                  <div id="myFoodList"></div>
+                </div>
               </details>
             </div>
             <div class="actions">
@@ -750,6 +820,8 @@
       { keys: ["グラノーラ"], name: "グラノーラ", unit: "g", defaultAmount: 50, kcal: 440, protein: 8.0, fat: 16.0, carbs: 64.0, fiber: 8.0, salt: 0.4, calcium: 40, iron: 3.5, vitaminC: 0, vitaminD: 0 },
       { keys: ["オートミール"], name: "オートミール", unit: "g", defaultAmount: 30, kcal: 350, protein: 13.7, fat: 5.7, carbs: 69.1, fiber: 9.4, salt: 0, calcium: 47, iron: 3.9, vitaminC: 0, vitaminD: 0 },
       { keys: ["コーンフレーク", "シリアル"], name: "コーンフレーク", unit: "g", defaultAmount: 40, kcal: 380, protein: 7.8, fat: 1.7, carbs: 83.0, fiber: 2.4, salt: 2.1, calcium: 1, iron: 0.9, vitaminC: 0, vitaminD: 0 },
+      { keys: ["メロンソーダ"], name: "メロンソーダ", unit: "ml", defaultAmount: 200, kcal: 45, protein: 0, fat: 0, carbs: 11.0, fiber: 0, salt: 0, calcium: 2, iron: 0, vitaminC: 0, vitaminD: 0 },
+      { keys: ["クリームソーダ"], name: "クリームソーダ", unit: "ml", defaultAmount: 250, kcal: 60, protein: 0.8, fat: 1.6, carbs: 11.0, fiber: 0, salt: 0.03, calcium: 25, iron: 0, vitaminC: 0, vitaminD: 0.05 },
       { keys: ["スムージー"], name: "スムージー", unit: "ml", defaultAmount: 200, kcal: 60, protein: 1.0, fat: 0.3, carbs: 14.0, fiber: 1.5, salt: 0, calcium: 20, iron: 0.3, vitaminC: 25, vitaminD: 0 },
       { keys: ["プロテインシェイク", "プロテインドリンク"], name: "プロテインシェイク", unit: "ml", defaultAmount: 200, kcal: 45, protein: 8.0, fat: 0.8, carbs: 2.0, fiber: 0.3, salt: 0.1, calcium: 60, iron: 0.5, vitaminC: 0, vitaminD: 0.3 },
       { keys: ["レタス"], name: "レタス", unit: "leaf", gramsPerUnit: 10, defaultAmount: 3, kcal: 12, protein: 0.6, fat: 0.1, carbs: 2.8, fiber: 1.1, salt: 0, calcium: 19, iron: 0.3, vitaminC: 5, vitaminD: 0 },
@@ -816,17 +888,17 @@
       { keys: ["どら焼き", "どらやき"], name: "どら焼き", unit: "piece", gramsPerUnit: 80, defaultAmount: 1, kcal: 280, protein: 6.0, fat: 3.0, carbs: 58.0, fiber: 2.5, salt: 0.4, calcium: 25, iron: 1.2, vitaminC: 0, vitaminD: 0.1 },
       { keys: ["まんじゅう", "饅頭"], name: "まんじゅう", unit: "piece", gramsPerUnit: 45, defaultAmount: 1, kcal: 260, protein: 5.0, fat: 1.0, carbs: 58.0, fiber: 2.0, salt: 0.2, calcium: 15, iron: 0.8, vitaminC: 0, vitaminD: 0 },
       { keys: ["ポテトチップス", "ポテチ"], name: "ポテトチップス", unit: "bag", gramsPerUnit: 60, defaultAmount: 1, kcal: 554, protein: 4.7, fat: 35.0, carbs: 55.0, fiber: 4.0, salt: 1.0, calcium: 20, iron: 0.8, vitaminC: 18, vitaminD: 0 },
-      { keys: ["タルタルソース", "タルタル"], name: "タルタルソース", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 370, protein: 1.5, fat: 36.0, carbs: 8.0, fiber: 0.2, salt: 1.6, calcium: 12, iron: 0.2, vitaminC: 0, vitaminD: 0.2 },
-      { keys: ["ごまドレッシング", "ゴマドレッシング", "胡麻ドレッシング"], name: "ごまドレッシング", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 360, protein: 3.0, fat: 30.0, carbs: 18.0, fiber: 1.0, salt: 3.0, calcium: 60, iron: 0.8, vitaminC: 0, vitaminD: 0 },
-      { keys: ["ドレッシング"], name: "ドレッシング", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 300, protein: 1.0, fat: 27.0, carbs: 12.0, fiber: 0.3, salt: 3.5, calcium: 20, iron: 0.3, vitaminC: 1, vitaminD: 0 },
-      { keys: ["マヨネーズ", "マヨ"], name: "マヨネーズ", unit: "tbsp", gramsPerUnit: 12, defaultAmount: 1, kcal: 668, protein: 1.4, fat: 76.0, carbs: 3.6, fiber: 0, salt: 1.8, calcium: 8, iron: 0.2, vitaminC: 0, vitaminD: 0.3 },
-      { keys: ["ケチャップ"], name: "ケチャップ", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 104, protein: 1.6, fat: 0.2, carbs: 25.9, fiber: 1.7, salt: 3.1, calcium: 17, iron: 0.4, vitaminC: 4, vitaminD: 0 },
-      { keys: ["中濃ソース", "とんかつソース", "ウスターソース", "ソース"], name: "ソース", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 130, protein: 1.0, fat: 0.1, carbs: 30.0, fiber: 0.8, salt: 6.0, calcium: 25, iron: 0.6, vitaminC: 1, vitaminD: 0 },
-      { keys: ["しょうゆ", "醤油"], name: "しょうゆ", unit: "tsp", gramsPerUnit: 6, defaultAmount: 1, kcal: 76, protein: 7.7, fat: 0, carbs: 7.9, fiber: 0, salt: 14.5, calcium: 29, iron: 1.7, vitaminC: 0, vitaminD: 0 },
-      { keys: ["みそ", "味噌"], name: "みそ", unit: "tbsp", gramsPerUnit: 18, defaultAmount: 1, kcal: 206, protein: 12.5, fat: 6.0, carbs: 25.0, fiber: 4.9, salt: 12.4, calcium: 100, iron: 4.0, vitaminC: 0, vitaminD: 0 },
-      { keys: ["ポン酢", "ぽん酢"], name: "ポン酢", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 60, protein: 3.0, fat: 0, carbs: 12.0, fiber: 0, salt: 8.0, calcium: 10, iron: 0.2, vitaminC: 2, vitaminD: 0 },
-      { keys: ["めんつゆ", "麺つゆ"], name: "めんつゆ", unit: "tbsp", gramsPerUnit: 15, defaultAmount: 1, kcal: 44, protein: 2.2, fat: 0, carbs: 8.7, fiber: 0, salt: 7.0, calcium: 8, iron: 0.2, vitaminC: 0, vitaminD: 0 },
-      { keys: ["焼肉のたれ", "焼き肉のたれ"], name: "焼肉のたれ", unit: "tbsp", gramsPerUnit: 18, defaultAmount: 1, kcal: 170, protein: 3.0, fat: 1.0, carbs: 35.0, fiber: 1.0, salt: 6.0, calcium: 25, iron: 0.7, vitaminC: 2, vitaminD: 0 },
+      { keys: ["タルタルソース", "タルタル"], name: "タルタルソース", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 1, kcal: 370, protein: 1.5, fat: 36.0, carbs: 8.0, fiber: 0.2, salt: 1.6, calcium: 12, iron: 0.2, vitaminC: 0, vitaminD: 0.2 },
+      { keys: ["ごまドレッシング", "ゴマドレッシング", "胡麻ドレッシング"], name: "ごまドレッシング", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 1, kcal: 360, protein: 3.0, fat: 30.0, carbs: 18.0, fiber: 1.0, salt: 3.0, calcium: 60, iron: 0.8, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ドレッシング"], name: "ドレッシング", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 1, kcal: 300, protein: 1.0, fat: 27.0, carbs: 12.0, fiber: 0.3, salt: 3.5, calcium: 20, iron: 0.3, vitaminC: 1, vitaminD: 0 },
+      { keys: ["マヨネーズ", "マヨ"], name: "マヨネーズ", unit: "tbsp", gramsPerUnit: 12, spoonGramsPerTbsp: 12, spoonGramsPerTsp: 4, defaultAmount: 1, kcal: 668, protein: 1.4, fat: 76.0, carbs: 3.6, fiber: 0, salt: 1.8, calcium: 8, iron: 0.2, vitaminC: 0, vitaminD: 0.3 },
+      { keys: ["ケチャップ"], name: "ケチャップ", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 1, kcal: 104, protein: 1.6, fat: 0.2, carbs: 25.9, fiber: 1.7, salt: 3.1, calcium: 17, iron: 0.4, vitaminC: 4, vitaminD: 0 },
+      { keys: ["中濃ソース", "とんかつソース", "ウスターソース", "ソース"], name: "ソース", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 18, spoonGramsPerTsp: 6, defaultAmount: 1, kcal: 130, protein: 1.0, fat: 0.1, carbs: 30.0, fiber: 0.8, salt: 6.0, calcium: 25, iron: 0.6, vitaminC: 1, vitaminD: 0 },
+      { keys: ["しょうゆ", "醤油"], name: "しょうゆ", unit: "tsp", gramsPerUnit: 6, spoonGramsPerTbsp: 18, spoonGramsPerTsp: 6, defaultAmount: 1, kcal: 76, protein: 7.7, fat: 0, carbs: 7.9, fiber: 0, salt: 14.5, calcium: 29, iron: 1.7, vitaminC: 0, vitaminD: 0 },
+      { keys: ["みそ", "味噌"], name: "みそ", unit: "tbsp", gramsPerUnit: 18, spoonGramsPerTbsp: 18, spoonGramsPerTsp: 6, defaultAmount: 1, kcal: 206, protein: 12.5, fat: 6.0, carbs: 25.0, fiber: 4.9, salt: 12.4, calcium: 100, iron: 4.0, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ポン酢", "ぽん酢"], name: "ポン酢", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 1, kcal: 60, protein: 3.0, fat: 0, carbs: 12.0, fiber: 0, salt: 8.0, calcium: 10, iron: 0.2, vitaminC: 2, vitaminD: 0 },
+      { keys: ["めんつゆ", "麺つゆ"], name: "めんつゆ", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 1, kcal: 44, protein: 2.2, fat: 0, carbs: 8.7, fiber: 0, salt: 7.0, calcium: 8, iron: 0.2, vitaminC: 0, vitaminD: 0 },
+      { keys: ["焼肉のたれ", "焼き肉のたれ"], name: "焼肉のたれ", unit: "tbsp", gramsPerUnit: 18, spoonGramsPerTbsp: 18, spoonGramsPerTsp: 6, defaultAmount: 1, kcal: 170, protein: 3.0, fat: 1.0, carbs: 35.0, fiber: 1.0, salt: 6.0, calcium: 25, iron: 0.7, vitaminC: 2, vitaminD: 0 },
       { keys: ["食塩", "塩"], name: "塩", unit: "tsp", gramsPerUnit: 6, spoonGramsPerTsp: 6, spoonGramsPerTbsp: 18, defaultAmount: 1, kcal: 0, protein: 0, fat: 0, carbs: 0, fiber: 0, salt: 100, calcium: 0, iron: 0, vitaminC: 0, vitaminD: 0 },
       { keys: ["こしょう", "胡椒", "コショウ", "ブラックペッパー"], name: "こしょう", unit: "tsp", gramsPerUnit: 2, spoonGramsPerTsp: 2, spoonGramsPerTbsp: 6, defaultAmount: 1, kcal: 370, protein: 10.0, fat: 6.0, carbs: 68.0, fiber: 26.0, salt: 0.1, calcium: 430, iron: 10.0, vitaminC: 0, vitaminD: 0 },
       { keys: ["料理酒", "酒"], name: "料理酒", unit: "tbsp", gramsPerUnit: 15, spoonGramsPerTsp: 5, spoonGramsPerTbsp: 15, defaultAmount: 1, kcal: 100, protein: 0.2, fat: 0, carbs: 5.0, fiber: 0, salt: 0.2, calcium: 2, iron: 0, vitaminC: 0, vitaminD: 0 },
@@ -839,14 +911,61 @@
       { keys: ["和風だし", "だしの素", "顆粒だし"], name: "和風だし", unit: "tsp", gramsPerUnit: 3, spoonGramsPerTsp: 3, spoonGramsPerTbsp: 9, defaultAmount: 1, kcal: 230, protein: 18.0, fat: 1.0, carbs: 35.0, fiber: 0, salt: 40.0, calcium: 20, iron: 0.5, vitaminC: 0, vitaminD: 0 },
       { keys: ["豆板醤"], name: "豆板醤", unit: "tsp", gramsPerUnit: 6, spoonGramsPerTsp: 6, spoonGramsPerTbsp: 18, defaultAmount: 1, kcal: 60, protein: 2.0, fat: 1.0, carbs: 10.0, fiber: 2.0, salt: 12.0, calcium: 30, iron: 1.0, vitaminC: 0, vitaminD: 0 },
       { keys: ["ラー油"], name: "ラー油", unit: "tsp", gramsPerUnit: 4, spoonGramsPerTsp: 4, spoonGramsPerTbsp: 12, defaultAmount: 1, kcal: 890, protein: 0, fat: 100.0, carbs: 0, fiber: 0, salt: 0, calcium: 0, iron: 0, vitaminC: 0, vitaminD: 0 },
-      { keys: ["オリーブオイル"], name: "オリーブオイル", unit: "tbsp", gramsPerUnit: 12, defaultAmount: 1, kcal: 894, protein: 0, fat: 100.0, carbs: 0, fiber: 0, salt: 0, calcium: 0, iron: 0, vitaminC: 0, vitaminD: 0 },
-      { keys: ["ごま油", "胡麻油"], name: "ごま油", unit: "tbsp", gramsPerUnit: 12, defaultAmount: 1, kcal: 890, protein: 0, fat: 100.0, carbs: 0, fiber: 0, salt: 0, calcium: 1, iron: 0, vitaminC: 0, vitaminD: 0 },
+      { keys: ["オリーブオイル"], name: "オリーブオイル", unit: "tbsp", gramsPerUnit: 12, spoonGramsPerTbsp: 12, spoonGramsPerTsp: 4, defaultAmount: 1, kcal: 894, protein: 0, fat: 100.0, carbs: 0, fiber: 0, salt: 0, calcium: 0, iron: 0, vitaminC: 0, vitaminD: 0 },
+      { keys: ["ごま油", "胡麻油"], name: "ごま油", unit: "tbsp", gramsPerUnit: 12, spoonGramsPerTbsp: 12, spoonGramsPerTsp: 4, defaultAmount: 1, kcal: 890, protein: 0, fat: 100.0, carbs: 0, fiber: 0, salt: 0, calcium: 1, iron: 0, vitaminC: 0, vitaminD: 0 },
       { keys: ["バター"], name: "バター", unit: "g", defaultAmount: 10, kcal: 700, protein: 0.6, fat: 81.0, carbs: 0.2, fiber: 0, salt: 1.9, calcium: 15, iron: 0, vitaminC: 0, vitaminD: 0.6 },
       { keys: ["ピーナッツバター", "ピーナツバター"], name: "ピーナッツバター", unit: "g", spoonGramsPerTbsp: 15, spoonGramsPerTsp: 5, defaultAmount: 15, kcal: 599, protein: 24.9, fat: 50.4, carbs: 20.4, fiber: 6.1, salt: 0.9, calcium: 47, iron: 1.6, vitaminC: 0, vitaminD: 0 },
       { keys: ["チーズ"], name: "チーズ", unit: "g", defaultAmount: 20, kcal: 313, protein: 22.7, fat: 26.0, carbs: 1.3, fiber: 0, salt: 2.8, calcium: 630, iron: 0.2, vitaminC: 0, vitaminD: 0.3 }
     ];
 
     const dishes = [
+      // 複合料理。グラタン/ドリア/カツ丼/ハンバーグ/寿司/そぼろ/豆腐/サラダ など
+      // 短い既存キーに吸われるため、それらより必ず上に置くこと。
+      // カレー系のうち、ご飯込みで供されるものはご飯を含む値、
+      // インド料理店のカレー（チキン/キーマ等）はルウのみの値で登録している。
+      { keys: ["カツカレー"], name: "カツカレー", serving: "1皿", kcal: 1100, protein: 38, fat: 45, carbs: 135, fiber: 6, salt: 4.2, calcium: 80, iron: 3.0, vitaminC: 18, vitaminD: 0.5 },
+      { keys: ["スープカレー"], name: "スープカレー", serving: "1皿", kcal: 700, protein: 25, fat: 28, carbs: 85, fiber: 6, salt: 3.4, calcium: 80, iron: 2.4, vitaminC: 35, vitaminD: 0.3 },
+      { keys: ["ドライカレー"], name: "ドライカレー", serving: "1皿", kcal: 650, protein: 20, fat: 22, carbs: 90, fiber: 4, salt: 3.0, calcium: 60, iron: 2.4, vitaminC: 12, vitaminD: 0.2 },
+      { keys: ["焼きカレー"], name: "焼きカレー", serving: "1皿", kcal: 750, protein: 24, fat: 28, carbs: 95, fiber: 5, salt: 3.2, calcium: 180, iron: 2.4, vitaminC: 14, vitaminD: 0.4 },
+      { keys: ["カレーグラタン"], name: "カレーグラタン", serving: "1皿", kcal: 550, protein: 20, fat: 28, carbs: 52, fiber: 3, salt: 2.6, calcium: 280, iron: 1.2, vitaminC: 8, vitaminD: 0.8 },
+      { keys: ["ソースカツ丼"], name: "ソースカツ丼", serving: "1杯", kcal: 950, protein: 35, fat: 38, carbs: 110, fiber: 4, salt: 3.4, calcium: 60, iron: 2.6, vitaminC: 6, vitaminD: 0.6 },
+      { keys: ["しらす丼"], name: "しらす丼", serving: "1杯", kcal: 400, protein: 20, fat: 3, carbs: 78, fiber: 2, salt: 2.4, calcium: 180, iron: 1.0, vitaminC: 2, vitaminD: 12.0 },
+      { keys: ["ネギトロ丼", "ねぎとろ丼"], name: "ネギトロ丼", serving: "1杯", kcal: 600, protein: 26, fat: 18, carbs: 82, fiber: 2, salt: 2.6, calcium: 45, iron: 1.6, vitaminC: 3, vitaminD: 4.0 },
+      { keys: ["そぼろ丼", "三色丼"], name: "そぼろ丼", serving: "1杯", kcal: 600, protein: 24, fat: 14, carbs: 88, fiber: 2, salt: 2.8, calcium: 60, iron: 2.0, vitaminC: 3, vitaminD: 1.2 },
+      { keys: ["天津丼"], name: "天津丼", serving: "1杯", kcal: 700, protein: 24, fat: 22, carbs: 98, fiber: 3, salt: 3.4, calcium: 80, iron: 2.2, vitaminC: 4, vitaminD: 1.5 },
+      { keys: ["鉄火丼"], name: "鉄火丼", serving: "1杯", kcal: 550, protein: 30, fat: 8, carbs: 88, fiber: 2, salt: 2.6, calcium: 40, iron: 2.0, vitaminC: 2, vitaminD: 5.0 },
+      { keys: ["ロコモコ"], name: "ロコモコ", serving: "1皿", kcal: 750, protein: 30, fat: 32, carbs: 85, fiber: 4, salt: 3.0, calcium: 80, iron: 3.0, vitaminC: 8, vitaminD: 1.5 },
+      { keys: ["皿うどん"], name: "皿うどん", serving: "1皿", kcal: 600, protein: 22, fat: 26, carbs: 70, fiber: 4, salt: 3.8, calcium: 120, iron: 2.0, vitaminC: 20, vitaminD: 0.3 },
+      { keys: ["焼きラーメン"], name: "焼きラーメン", serving: "1皿", kcal: 600, protein: 22, fat: 22, carbs: 78, fiber: 4, salt: 4.2, calcium: 80, iron: 2.0, vitaminC: 10, vitaminD: 0.3 },
+      { keys: ["ちゃんぽん"], name: "ちゃんぽん", serving: "1杯", kcal: 600, protein: 26, fat: 22, carbs: 72, fiber: 5, salt: 5.0, calcium: 140, iron: 2.2, vitaminC: 22, vitaminD: 0.4 },
+      { keys: ["そうめん", "にゅうめん"], name: "そうめん", serving: "1杯", kcal: 350, protein: 12, fat: 2, carbs: 70, fiber: 3, salt: 3.2, calcium: 30, iron: 1.0, vitaminC: 1, vitaminD: 0 },
+      { keys: ["ひやむぎ", "冷や麦"], name: "ひやむぎ", serving: "1杯", kcal: 360, protein: 12, fat: 2, carbs: 72, fiber: 3, salt: 3.2, calcium: 30, iron: 1.0, vitaminC: 1, vitaminD: 0 },
+      { keys: ["天津麺"], name: "天津麺", serving: "1杯", kcal: 650, protein: 24, fat: 22, carbs: 84, fiber: 4, salt: 5.4, calcium: 90, iron: 2.2, vitaminC: 5, vitaminD: 1.4 },
+      { keys: ["あんかけ焼きそば"], name: "あんかけ焼きそば", serving: "1皿", kcal: 620, protein: 22, fat: 24, carbs: 78, fiber: 4, salt: 4.0, calcium: 90, iron: 2.0, vitaminC: 18, vitaminD: 0.3 },
+      { keys: ["パスタサラダ"], name: "パスタサラダ", serving: "1皿", kcal: 300, protein: 8, fat: 14, carbs: 36, fiber: 3, salt: 1.4, calcium: 50, iron: 1.0, vitaminC: 12, vitaminD: 0.2 },
+      { keys: ["中華風サラダ", "中華サラダ"], name: "中華風サラダ", serving: "1皿", kcal: 180, protein: 8, fat: 10, carbs: 14, fiber: 3, salt: 1.6, calcium: 50, iron: 1.0, vitaminC: 15, vitaminD: 0.1 },
+      { keys: ["キムチ鍋"], name: "キムチ鍋", serving: "1人前", kcal: 400, protein: 28, fat: 18, carbs: 30, fiber: 6, salt: 4.4, calcium: 150, iron: 2.8, vitaminC: 30, vitaminD: 0.5 },
+      { keys: ["もつ鍋"], name: "もつ鍋", serving: "1人前", kcal: 500, protein: 28, fat: 30, carbs: 24, fiber: 6, salt: 4.0, calcium: 140, iron: 3.0, vitaminC: 25, vitaminD: 0.4 },
+      { keys: ["水炊き", "みずたき"], name: "水炊き", serving: "1人前", kcal: 400, protein: 35, fat: 20, carbs: 18, fiber: 5, salt: 3.0, calcium: 130, iron: 2.0, vitaminC: 25, vitaminD: 0.4 },
+      { keys: ["寄せ鍋"], name: "寄せ鍋", serving: "1人前", kcal: 380, protein: 30, fat: 16, carbs: 24, fiber: 5, salt: 3.6, calcium: 150, iron: 2.2, vitaminC: 22, vitaminD: 2.0 },
+      { keys: ["石狩鍋"], name: "石狩鍋", serving: "1人前", kcal: 420, protein: 30, fat: 20, carbs: 26, fiber: 5, salt: 3.4, calcium: 160, iron: 2.0, vitaminC: 25, vitaminD: 12.0 },
+      { keys: ["エビグラタン", "海老グラタン"], name: "エビグラタン", serving: "1皿", kcal: 480, protein: 22, fat: 26, carbs: 38, fiber: 2, salt: 2.4, calcium: 300, iron: 1.0, vitaminC: 6, vitaminD: 0.8 },
+      { keys: ["マカロニグラタン"], name: "マカロニグラタン", serving: "1皿", kcal: 500, protein: 20, fat: 26, carbs: 46, fiber: 3, salt: 2.4, calcium: 300, iron: 1.0, vitaminC: 6, vitaminD: 0.8 },
+      { keys: ["シーフードドリア"], name: "シーフードドリア", serving: "1皿", kcal: 620, protein: 24, fat: 26, carbs: 70, fiber: 3, salt: 2.8, calcium: 280, iron: 1.4, vitaminC: 8, vitaminD: 0.8 },
+      { keys: ["ミートドリア"], name: "ミートドリア", serving: "1皿", kcal: 680, protein: 24, fat: 30, carbs: 76, fiber: 3, salt: 3.0, calcium: 280, iron: 1.8, vitaminC: 8, vitaminD: 0.8 },
+      { keys: ["ハンバーグ定食"], name: "ハンバーグ定食", serving: "1食", kcal: 900, protein: 34, fat: 38, carbs: 105, fiber: 5, salt: 4.0, calcium: 120, iron: 3.2, vitaminC: 15, vitaminD: 0.7 },
+      { keys: ["豆腐ハンバーグ"], name: "豆腐ハンバーグ", serving: "1人前", kcal: 320, protein: 20, fat: 18, carbs: 18, fiber: 3, salt: 2.0, calcium: 150, iron: 2.5, vitaminC: 5, vitaminD: 0.3 },
+      { keys: ["五目チャーハン"], name: "五目チャーハン", serving: "1皿", kcal: 750, protein: 22, fat: 26, carbs: 102, fiber: 4, salt: 3.2, calcium: 70, iron: 2.0, vitaminC: 10, vitaminD: 1.0 },
+      { keys: ["揚げ出し豆腐", "揚げだし豆腐"], name: "揚げ出し豆腐", serving: "1皿", kcal: 250, protein: 12, fat: 18, carbs: 10, fiber: 2, salt: 1.6, calcium: 180, iron: 2.0, vitaminC: 2, vitaminD: 0.1 },
+      { keys: ["肉豆腐"], name: "肉豆腐", serving: "1皿", kcal: 350, protein: 22, fat: 22, carbs: 14, fiber: 2, salt: 2.4, calcium: 160, iron: 2.5, vitaminC: 4, vitaminD: 0.2 },
+      { keys: ["納豆巻き"], name: "納豆巻き", serving: "1本", kcal: 200, protein: 8, fat: 3, carbs: 36, fiber: 3, salt: 1.0, calcium: 40, iron: 1.5, vitaminC: 0, vitaminD: 0 },
+      { keys: ["いなり寿司", "稲荷寿司", "おいなりさん"], name: "いなり寿司", serving: "2個", kcal: 260, protein: 7, fat: 6, carbs: 44, fiber: 2, salt: 1.6, calcium: 60, iron: 1.2, vitaminC: 0, vitaminD: 0 },
+      { keys: ["かき玉汁", "かきたま汁"], name: "かき玉汁", serving: "1杯", kcal: 60, protein: 4, fat: 2, carbs: 6, fiber: 0.5, salt: 1.6, calcium: 25, iron: 0.5, vitaminC: 1, vitaminD: 0.6 },
+      { keys: ["けんちん汁"], name: "けんちん汁", serving: "1杯", kcal: 150, protein: 7, fat: 8, carbs: 13, fiber: 3, salt: 1.8, calcium: 90, iron: 1.2, vitaminC: 8, vitaminD: 0.1 },
+      { keys: ["粕汁", "かす汁"], name: "粕汁", serving: "1杯", kcal: 180, protein: 9, fat: 7, carbs: 18, fiber: 3, salt: 2.0, calcium: 70, iron: 1.0, vitaminC: 8, vitaminD: 1.5 },
+      { keys: ["たまごサンド", "卵サンド", "玉子サンド"], name: "たまごサンド", serving: "1食", kcal: 350, protein: 13, fat: 20, carbs: 30, fiber: 2, salt: 1.6, calcium: 70, iron: 1.2, vitaminC: 1, vitaminD: 1.5 },
+      { keys: ["フルーツサンド"], name: "フルーツサンド", serving: "1食", kcal: 350, protein: 6, fat: 16, carbs: 46, fiber: 2, salt: 0.8, calcium: 70, iron: 0.6, vitaminC: 20, vitaminD: 0.3 },
+      { keys: ["カツサンド"], name: "カツサンド", serving: "1食", kcal: 500, protein: 20, fat: 26, carbs: 46, fiber: 3, salt: 2.2, calcium: 60, iron: 1.4, vitaminC: 4, vitaminD: 0.3 },
       // 麺・粉物・ご飯物の派生形。ラーメン/そば/うどん/おにぎり/焼きそば/天ぷら など
       // より短い既存キーに吸われるため、それらより必ず上に置くこと。
       { keys: ["味噌ラーメン", "みそラーメン"], name: "味噌ラーメン", serving: "1杯", kcal: 700, protein: 26, fat: 24, carbs: 88, fiber: 5, salt: 6.5, calcium: 120, iron: 2.2, vitaminC: 8, vitaminD: 0.5 },
@@ -919,7 +1038,7 @@
       { keys: ["カキ鍋", "牡蠣鍋"], name: "カキ鍋", serving: "1人前", kcal: 320, protein: 20, fat: 12, carbs: 28, fiber: 5, salt: 3.2, calcium: 180, iron: 3.5, vitaminC: 25, vitaminD: 0.3 },
       { keys: ["かき揚げ", "掻き揚げ"], name: "かき揚げ", serving: "1個", kcal: 350, protein: 8, fat: 24, carbs: 26, fiber: 3, salt: 1.2, calcium: 50, iron: 1.0, vitaminC: 5, vitaminD: 0.3 },
       { keys: ["天ぷら", "天麩羅"], name: "天ぷら", serving: "1人前", kcal: 450, protein: 18, fat: 28, carbs: 32, fiber: 3, salt: 1.8, calcium: 60, iron: 1.2, vitaminC: 8, vitaminD: 1.5 },
-      { keys: ["茶碗蒸し"], name: "茶碗蒸し", serving: "1個", kcal: 90, protein: 8, fat: 4, carbs: 5, fiber: 0.5, salt: 1.4, calcium: 30, iron: 0.6, vitaminC: 2, vitaminD: 1.2 },
+      { keys: ["茶碗蒸し", "茶わん蒸し"], name: "茶碗蒸し", serving: "1個", kcal: 90, protein: 8, fat: 4, carbs: 5, fiber: 0.5, salt: 1.4, calcium: 30, iron: 0.6, vitaminC: 2, vitaminD: 1.2 },
       { keys: ["筑前煮", "がめ煮"], name: "筑前煮", serving: "1皿", kcal: 240, protein: 14, fat: 8, carbs: 28, fiber: 6, salt: 2.4, calcium: 60, iron: 1.2, vitaminC: 12, vitaminD: 0.3 },
       { keys: ["すき焼き", "スキヤキ"], name: "すき焼き", serving: "1人前", kcal: 700, protein: 36, fat: 42, carbs: 40, fiber: 5, salt: 4.5, calcium: 180, iron: 4.0, vitaminC: 12, vitaminD: 1.0 },
       { keys: ["しゃぶしゃぶ"], name: "しゃぶしゃぶ", serving: "1人前", kcal: 520, protein: 34, fat: 34, carbs: 14, fiber: 4, salt: 3.0, calcium: 150, iron: 3.0, vitaminC: 20, vitaminD: 0.6 },
@@ -959,6 +1078,15 @@
       { keys: ["ナン"], name: "ナン", serving: "1枚", kcal: 330, protein: 9, fat: 7, carbs: 58, fiber: 2, salt: 1.2, calcium: 35, iron: 1.5, vitaminC: 0, vitaminD: 0 },
       { keys: ["インドカレー", "バターチキンカレー"], name: "インドカレー", serving: "1皿", kcal: 520, protein: 22, fat: 30, carbs: 38, fiber: 5, salt: 3.0, calcium: 90, iron: 2.5, vitaminC: 14, vitaminD: 0.3 },
       { keys: ["グリーンカレー", "タイカレー"], name: "グリーンカレー", serving: "1皿", kcal: 650, protein: 25, fat: 32, carbs: 70, fiber: 5, salt: 3.5, calcium: 80, iron: 2.2, vitaminC: 24, vitaminD: 0.2 },
+      // インド料理店のカレー（ルウのみ。ご飯・ナンは別項目として書く前提）。
+      // "バターチキンカレー" を横取りしないよう、必ずインドカレーより下に置くこと。
+      { keys: ["チキンカレー"], name: "チキンカレー", serving: "1皿", kcal: 480, protein: 28, fat: 32, carbs: 20, fiber: 4, salt: 2.6, calcium: 80, iron: 2.0, vitaminC: 10, vitaminD: 0.3 },
+      { keys: ["キーマカレー"], name: "キーマカレー", serving: "1皿", kcal: 520, protein: 26, fat: 36, carbs: 22, fiber: 5, salt: 2.8, calcium: 70, iron: 2.8, vitaminC: 12, vitaminD: 0.3 },
+      { keys: ["マトンカレー", "ラムカレー"], name: "マトンカレー", serving: "1皿", kcal: 550, protein: 28, fat: 40, carbs: 20, fiber: 4, salt: 2.8, calcium: 60, iron: 3.0, vitaminC: 10, vitaminD: 0.2 },
+      { keys: ["サグカレー", "ほうれん草カレー"], name: "サグカレー", serving: "1皿", kcal: 420, protein: 16, fat: 30, carbs: 18, fiber: 6, salt: 2.4, calcium: 180, iron: 3.5, vitaminC: 25, vitaminD: 0.2 },
+      { keys: ["エビカレー", "海老カレー"], name: "エビカレー", serving: "1皿", kcal: 400, protein: 24, fat: 26, carbs: 20, fiber: 4, salt: 2.6, calcium: 90, iron: 1.5, vitaminC: 10, vitaminD: 0.3 },
+      { keys: ["野菜カレー", "ベジカレー"], name: "野菜カレー", serving: "1皿", kcal: 380, protein: 10, fat: 24, carbs: 30, fiber: 7, salt: 2.4, calcium: 70, iron: 2.0, vitaminC: 30, vitaminD: 0.1 },
+      { keys: ["ダルカレー", "豆カレー"], name: "ダルカレー", serving: "1皿", kcal: 350, protein: 16, fat: 18, carbs: 32, fiber: 8, salt: 2.4, calcium: 60, iron: 3.2, vitaminC: 8, vitaminD: 0 },
       { keys: ["ガパオライス", "ガパオ"], name: "ガパオライス", serving: "1皿", kcal: 720, protein: 32, fat: 28, carbs: 85, fiber: 4, salt: 3.2, calcium: 70, iron: 2.8, vitaminC: 18, vitaminD: 1.2 },
       { keys: ["パッタイ"], name: "パッタイ", serving: "1皿", kcal: 700, protein: 24, fat: 24, carbs: 95, fiber: 4, salt: 3.8, calcium: 90, iron: 2.2, vitaminC: 12, vitaminD: 0.2 },
       { keys: ["フォー"], name: "フォー", serving: "1杯", kcal: 480, protein: 24, fat: 8, carbs: 78, fiber: 3, salt: 4.0, calcium: 55, iron: 1.8, vitaminC: 12, vitaminD: 0.2 },
@@ -1011,7 +1139,7 @@
       { keys: ["ぶり大根", "ブリ大根", "鰤大根"], name: "ぶり大根", serving: "1人前", kcal: 270, protein: 19, fat: 14, carbs: 20, fiber: 2, salt: 2.8, calcium: 45, iron: 1.4, vitaminC: 12, vitaminD: 6.4 },
       { keys: ["刺身", "お刺身"], name: "刺身", serving: "1人前", kcal: 180, protein: 28, fat: 6, carbs: 2, fiber: 0, salt: 1.0, calcium: 20, iron: 0.8, vitaminC: 1, vitaminD: 4.5 },
       { keys: ["焼き鳥", "やきとり"], name: "焼き鳥", serving: "2本", kcal: 220, protein: 20, fat: 12, carbs: 8, fiber: 0, salt: 1.6, calcium: 15, iron: 1.0, vitaminC: 1, vitaminD: 0.3 },
-      { keys: ["卵焼き", "玉子焼き", "だし巻き卵"], name: "卵焼き", serving: "1人前", kcal: 180, protein: 11, fat: 12, carbs: 7, fiber: 0, salt: 1.0, calcium: 45, iron: 1.3, vitaminC: 0, vitaminD: 3.0 },
+      { keys: ["卵焼き", "玉子焼き", "だし巻き卵", "だし巻き"], name: "卵焼き", serving: "1人前", kcal: 180, protein: 11, fat: 12, carbs: 7, fiber: 0, salt: 1.0, calcium: 45, iron: 1.3, vitaminC: 0, vitaminD: 3.0 },
       { keys: ["豚汁", "とん汁"], name: "豚汁", serving: "1杯", kcal: 180, protein: 9, fat: 9, carbs: 16, fiber: 4, salt: 1.8, calcium: 55, iron: 1.1, vitaminC: 12, vitaminD: 0.2 },
       { keys: ["おでん"], name: "おでん", serving: "1人前", kcal: 300, protein: 22, fat: 10, carbs: 28, fiber: 3, salt: 4.0, calcium: 120, iron: 1.5, vitaminC: 8, vitaminD: 1.0 },
       { keys: ["ポテトサラダ", "ポテサラ"], name: "ポテトサラダ", serving: "1皿", kcal: 180, protein: 4, fat: 11, carbs: 18, fiber: 2, salt: 0.9, calcium: 25, iron: 0.5, vitaminC: 18, vitaminD: 0.1 },
@@ -1088,23 +1216,27 @@
     const packageName = document.querySelector("#packageName");
     const packageAddButton = document.querySelector("#packageAddButton");
     const packageStatus = document.querySelector("#packageStatus");
+    const packageSaveMyFood = document.querySelector("#packageSaveMyFood");
+    const myFoodList = document.querySelector("#myFoodList");
     const draftKey = "meal-balance-note-draft";
+    // 下書きとは別キー。下書きを消してもマイ食材は残す。
+    const myFoodKey = "meal-balance-note-myfoods";
     const draftFieldIds = ["age", "sex", "height", "weight", "activity", "steps", "activeEnergy", "exerciseMinutes", "foodText"];
 
     // parseManualNutritionItem が読み取れる書式を組み立てる。熱量だけはラベル無しで出す。
     // "熱量200kcal" と書くとラベルが数値と一緒に除去されず、商品名に "熱量" が残るため。
     const packageFieldMap = [
-      { id: "packageKcal", label: "", unit: "kcal" },
-      { id: "packageProtein", label: "たんぱく質", unit: "g" },
-      { id: "packageFat", label: "脂質", unit: "g" },
-      { id: "packageCarbs", label: "炭水化物", unit: "g" },
-      { id: "packageSugar", label: "糖質", unit: "g" },
-      { id: "packageFiber", label: "食物繊維", unit: "g" },
-      { id: "packageSalt", label: "食塩相当量", unit: "g" },
-      { id: "packageCalcium", label: "カルシウム", unit: "mg" },
-      { id: "packageIron", label: "鉄", unit: "mg" },
-      { id: "packageVitaminC", label: "ビタミンC", unit: "mg" },
-      { id: "packageVitaminD", label: "ビタミンD", unit: "ug" }
+      { id: "packageKcal", key: "kcal", label: "", unit: "kcal" },
+      { id: "packageProtein", key: "protein", label: "たんぱく質", unit: "g" },
+      { id: "packageFat", key: "fat", label: "脂質", unit: "g" },
+      { id: "packageCarbs", key: "carbs", label: "炭水化物", unit: "g" },
+      { id: "packageSugar", key: "sugar", label: "糖質", unit: "g" },
+      { id: "packageFiber", key: "fiber", label: "食物繊維", unit: "g" },
+      { id: "packageSalt", key: "salt", label: "食塩相当量", unit: "g" },
+      { id: "packageCalcium", key: "calcium", label: "カルシウム", unit: "mg" },
+      { id: "packageIron", key: "iron", label: "鉄", unit: "mg" },
+      { id: "packageVitaminC", key: "vitaminC", label: "ビタミンC", unit: "mg" },
+      { id: "packageVitaminD", key: "vitaminD", label: "ビタミンD", unit: "ug" }
     ];
 
     document.querySelector("#todayLabel").textContent = new Intl.DateTimeFormat("ja-JP", {
@@ -1136,11 +1268,22 @@
         packageStatus.textContent = "熱量か栄養成分を1つ以上入力してください";
         return;
       }
+
+      let savedNotice = "";
+      if (packageSaveMyFood.checked) {
+        const result = saveMyFood();
+        if (!result.saved) {
+          packageStatus.textContent = result.message;
+          return;
+        }
+        savedNotice = ` / ${result.message}`;
+      }
+
       const current = foodText.value.trim();
       foodText.value = current ? `${current}\n${line}` : line;
       clearPackageFields();
       saveDraft();
-      packageStatus.textContent = `食材メモに追加しました: ${line}`;
+      packageStatus.textContent = `食材メモに追加しました: ${line}${savedNotice}`;
       form.requestSubmit();
     });
 
@@ -1264,10 +1407,13 @@
         return { raw: text, name: text, matched: false, estimated: true, grams: 0, amountLabel: "未登録" };
       }
 
-      const gramsMatch = text.match(/(\d+(?:\.\d+)?)\s*(g|グラム)/i);
-      const mlMatch = text.match(/(\d+(?:\.\d+)?)\s*(ml|ミリリットル)/i);
-      const countMatch = text.match(/(\d+(?:\.\d+)?)\s*(個|枚|切れ|杯|皿|本|パック|袋|箱|粒|カップ)/);
-      const spoonAmount = parseSpoonAmount(text, match);
+      // 数量は括弧の外だけを見る（"食パン (6枚切り)" の 6枚 は厚さの表記であって枚数ではない）。
+      // 食材名の照合は元の text のままなので、括弧内に名前があっても引ける。
+      const amountText = stripParenthesised(text);
+      const gramsMatch = amountText.match(/(\d+(?:\.\d+)?)\s*(g|グラム)/i);
+      const mlMatch = amountText.match(/(\d+(?:\.\d+)?)\s*(ml|ミリリットル)/i);
+      const countMatch = amountText.match(/(\d+(?:\.\d+)?)\s*(個|枚|切れ|杯|皿|本|パック|袋|箱|粒|カップ)/);
+      const spoonAmount = parseSpoonAmount(amountText, match);
       let grams = 0;
       let amountLabel = "";
       let estimated = false;
@@ -1394,10 +1540,10 @@
       const looksLikeBread = /パン|明太フランス|ガーリックフランス|チーズフランス|フランスパン|ベーグル|フォカッチャ|バゲット|バケット|ホットドッグ|ピザトースト|惣菜パン|調理パン/.test(cleaned);
       if (!looksLikeBread) return null;
 
-      const knownBread = /クロワッサン|パンオショコラ|パン・オ・ショコラ|チョコクロワッサン|ロールパン|ベーグル|メロンパン|あんぱん|アンパン|クリームパン|ジャムパン|塩パン|フランスパン|バゲット|バケット|明太フランス|ガーリックフランス|ウインナーパン|ソーセージパン|焼きそばパン|やきそばパン|たまごパン|卵パン|チーズパン|フォカッチャ|スコーン|マフィン/.test(cleaned) || /^(食パン|トースト)(\s|$|[0-9０-９])/.test(cleaned);
+      const knownBread = /クロワッサン|パンオショコラ|パン・オ・ショコラ|チョコクロワッサン|ロールパン|ベーグル|メロンパン|あんぱん|アンパン|クリームパン|ジャムパン|塩パン|フランスパン|バゲット|バケット|明太フランス|ガーリックフランス|ウインナーパン|ソーセージパン|焼きそばパン|やきそばパン|たまごパン|卵パン|チーズパン|フォカッチャ|スコーン|マフィン/.test(cleaned) || /^(食パン|トースト)(\s|$|[0-9０-９(（])/.test(cleaned);
       if (knownBread) return null;
 
-      const countMatch = cleaned.match(/(\d+(?:\.\d+)?)\s*(個|本|枚|切れ)/);
+      const countMatch = stripParenthesised(cleaned).match(/(\d+(?:\.\d+)?)\s*(個|本|枚|切れ)/);
       const count = countMatch ? Number(countMatch[1]) : 1;
       const portion = portionHints.find(hint => hint.pattern.test(cleaned));
       const multiplier = (portion ? portion.multiplier : 1) * count;
@@ -1413,6 +1559,8 @@
         nutrition: scaleDishNutrition({
           kcal: 350,
           protein: 8,
+          fat: 14,
+          carbs: 45,
           fiber: 2,
           salt: 1.3,
           calcium: 35,
@@ -1481,7 +1629,9 @@
     // serving 側の個数で割って実数量に換算する（"餃子 6個" は 6人前ではなく 1人前）。
     // 単位が違うときは人前数とみなす（"餃子 2皿" は 2人前）。
     function getServingAmount(text, serving) {
-      const match = text.match(/(\d+(?:\.\d+)?)\s*(皿|杯|食|人前|個|本|枚|切れ)/);
+      // 括弧内は材料の補足（"チーズオムレツ (卵2個)"）なので数量として拾わない。
+      // 括弧を外した側だけを見る。料理名のマッチングは元の text のまま行う。
+      const match = stripParenthesised(text).match(/(\d+(?:\.\d+)?)\s*(皿|杯|食|人前|個|本|枚|切れ)/);
       if (!match) return { multiplier: 1, label: serving };
 
       const count = Number(match[1]);
@@ -1494,6 +1644,11 @@
         multiplier: unit === baseUnit && baseCount > 0 ? count / baseCount : count,
         label: `${count}${unit}`
       };
+    }
+
+    // 半角・全角どちらの括弧も、入れ子や閉じ忘れがあっても取り除く。
+    function stripParenthesised(text) {
+      return text.replace(/[(（][^)）]*[)）]?/g, " ");
     }
 
     function scaleDishNutrition(dish, multiplier) {
@@ -1739,6 +1894,116 @@
       });
     }
 
+    // マイ食材は dishes と同じ「1食分あたり」の形で持ち、起動時に dishes の先頭へ差し込む。
+    // parseDishItem は先頭一致なので、数量・分量ヒント・ラベルは既存の仕組みがそのまま効く。
+    function loadMyFoods() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(myFoodKey) || "[]");
+        if (!Array.isArray(saved)) return [];
+        return saved.filter(entry => entry && typeof entry.name === "string" && entry.name.trim());
+      } catch {
+        localStorage.removeItem(myFoodKey);
+        return [];
+      }
+    }
+
+    function storeMyFoods(entries) {
+      localStorage.setItem(myFoodKey, JSON.stringify(entries));
+    }
+
+    function applyMyFoods() {
+      // 前回差し込んだぶんを取り除いてから入れ直す（重複防止）。
+      for (let i = dishes.length - 1; i >= 0; i -= 1) {
+        if (dishes[i].isMyFood) dishes.splice(i, 1);
+      }
+      loadMyFoods().slice().reverse().forEach(entry => {
+        dishes.unshift({
+          keys: [entry.name],
+          name: entry.name,
+          serving: entry.serving || "1食",
+          isMyFood: true,
+          ...Object.fromEntries(Object.keys(nutrientLabels).map(key => [key, Number(entry[key]) || 0]))
+        });
+      });
+      renderMyFoodList();
+    }
+
+    function saveMyFood() {
+      const name = packageName.value.replace(/[、,\n]/g, " ").replace(/\s+/g, " ").trim();
+      if (!name) return { saved: false, message: "マイ食材として保存するには商品名を入力してください" };
+
+      const nutrition = {};
+      let hasValue = false;
+      packageFieldMap.forEach(field => {
+        const raw = document.querySelector(`#${field.id}`).value.trim();
+        const value = raw === "" ? 0 : Number(raw);
+        nutrition[field.key] = Number.isFinite(value) ? value : 0;
+        if (nutrition[field.key] > 0) hasValue = true;
+      });
+      if (!hasValue) return { saved: false, message: "熱量か栄養成分を1つ以上入力してください" };
+
+      const entries = loadMyFoods();
+      const existing = entries.findIndex(entry => entry.name === name);
+      const updated = { name, serving: "1食", ...nutrition };
+      if (existing >= 0) entries[existing] = updated;
+      else entries.push(updated);
+      storeMyFoods(entries);
+      applyMyFoods();
+
+      const collision = findMyFoodCollision(name);
+      return {
+        saved: true,
+        message: existing >= 0
+          ? `マイ食材「${name}」を更新しました`
+          : `マイ食材「${name}」を保存しました${collision ? `（既存の「${collision}」より優先されます）` : ""}`
+      };
+    }
+
+    // 既存データと名前が衝突する場合に知らせる（登録自体は許可し、マイ食材を優先する）。
+    function findMyFoodCollision(name) {
+      const dish = dishes.find(entry => !entry.isMyFood && entry.keys.some(key => name.includes(key)));
+      if (dish) return dish.name;
+      const food = foods.find(entry => entry.keys.some(key => name.includes(key)));
+      return food ? food.name : "";
+    }
+
+    function renderMyFoodList() {
+      const entries = loadMyFoods();
+      if (!entries.length) {
+        myFoodList.innerHTML = `<p class="myfood-empty">まだ登録がありません。上の欄に入力し、チェックを入れて「食材メモに追加」を押すと登録されます。</p>`;
+        return;
+      }
+      myFoodList.innerHTML = entries.map((entry, index) => `
+        <div class="myfood-item">
+          <div>
+            ${escapeHtml(entry.name)}
+            <small>${Math.round(Number(entry.kcal) || 0)}kcal / ${entry.serving || "1食"}あたり</small>
+          </div>
+          <button class="myfood-delete" type="button" data-myfood-index="${index}">削除</button>
+        </div>
+      `).join("");
+    }
+
+    myFoodList.addEventListener("click", event => {
+      const button = event.target.closest("[data-myfood-index]");
+      if (!button) return;
+      const entries = loadMyFoods();
+      const index = Number(button.dataset.myfoodIndex);
+      if (!entries[index]) return;
+      const removed = entries[index].name;
+      entries.splice(index, 1);
+      storeMyFoods(entries);
+      applyMyFoods();
+      packageStatus.textContent = `マイ食材「${removed}」を削除しました`;
+      form.requestSubmit();
+    });
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"']/g, char => (
+        { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+      ));
+    }
+
     function saveDraft() {
       const draft = {};
       draftFieldIds.forEach(id => {
@@ -1769,6 +2034,7 @@
     }
 
     loadDraft();
+    applyMyFoods();
     form.requestSubmit();
   </script>
 </body>
